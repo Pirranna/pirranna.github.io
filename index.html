@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Logiciel</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #111;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #0066ff, #00c3ff);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 35px;
+            background: white;
+            color: #0066ff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+        }
+
+        section {
+            max-width: 1000px;
+            margin: auto;
+            padding: 60px 20px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1d1d1d;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #00c3ff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #181818;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Mon Logiciel</h1>
+    <p class="subtitle">Une courte description de votre logiciel.</p>
+
+    <a class="download-btn" href="#">
+        Télécharger
+    </a>
+</header>
+
+<section>
+    <h2>Fonctionnalités</h2>
+    <br>
+
+    <div class="features">
+        <div class="card">
+            <h3>Rapide</h3>
+            <p>Optimisé pour de hautes performances.</p>
+        </div>
+
+        <div class="card">
+            <h3>Simple</h3>
+            <p>Interface intuitive et facile à utiliser.</p>
+        </div>
+
+        <div class="card">
+            <h3>Gratuit</h3>
+            <p>Disponible sans frais pour tous.</p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>À propos</h2>
+    <br>
+    <p>
+        Décrivez ici votre logiciel, son objectif et ce qui le rend unique.
+    </p>
+</section>
+
+<footer>
+    © 2026 Mon Logiciel
+</footer>
+
+</body>
+</html>
