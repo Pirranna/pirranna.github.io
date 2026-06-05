@@ -7,15 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark theme - profond et équilibré */
             --bg: #0c0b10;
             --surface: #18171c;
             --surface-elevated: #222127;
             --text: #efedea;
             --text-soft: #b1aba2;
-            --accent: #e6846b;      /* version plus lumineuse de e07a5f */
-            --accent2: #7c8cae;     /* bleu-gris élégant remplace 3d405b */
-            --accent3: #6b9e8a;     /* vert sage apaisant */
+            --accent: #e6846b;
+            --accent2: #7c8cae;
+            --accent3: #6b9e8a;
             --border: #2b2930;
             --radius-blob: 40% 60% 60% 40% / 50% 40% 60% 50%;
             --radius-card: 22px;
@@ -38,7 +37,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Arrière-plan organique plus subtil en mode sombre */
         .bg-blob {
             position: fixed;
             border-radius: var(--radius-blob);
@@ -47,37 +45,50 @@
             z-index: 0;
             pointer-events: none;
         }
-        .bg-blob-1 {
-            width: 600px;
-            height: 600px;
-            background: #e6846b;
-            top: -250px;
-            right: -200px;
-            animation: floatBlob 14s ease-in-out infinite alternate;
-        }
-        .bg-blob-2 {
-            width: 500px;
-            height: 500px;
-            background: #6b9e8a;
-            bottom: -200px;
-            left: -150px;
-            animation: floatBlob 18s ease-in-out infinite alternate-reverse;
-        }
-        .bg-blob-3 {
-            width: 350px;
-            height: 350px;
-            background: #7c8cae;
-            top: 50%;
-            left: 60%;
-            animation: floatBlob 16s ease-in-out infinite alternate;
-        }
+        .bg-blob-1 { width: 600px; height: 600px; background: #e6846b; top: -250px; right: -200px; animation: floatBlob 14s ease-in-out infinite alternate; }
+        .bg-blob-2 { width: 500px; height: 500px; background: #6b9e8a; bottom: -200px; left: -150px; animation: floatBlob 18s ease-in-out infinite alternate-reverse; }
+        .bg-blob-3 { width: 350px; height: 350px; background: #7c8cae; top: 50%; left: 60%; animation: floatBlob 16s ease-in-out infinite alternate; }
 
         @keyframes floatBlob {
             0% { transform: translate(0, 0) scale(1) rotate(0deg); }
             100% { transform: translate(40px, 50px) scale(1.15) rotate(6deg); }
         }
 
-        /* Navigation - verre dépoli sombre */
+        /* =============================================
+           HALFTONE GRADIENT WRAPPER
+           ============================================= */
+        .halftone-wrap {
+            position: relative;
+            display: inline-flex;
+            padding: 22px 28px;
+            margin: -22px -28px;
+        }
+
+        .halftone-wrap.ht-nav {
+            padding: 12px 18px;
+            margin: -12px -18px;
+        }
+
+        .halftone-wrap canvas.ht-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            /* clip strictly to the padded wrap box */
+            border-radius: inherit;
+        }
+
+        .halftone-wrap > a,
+        .halftone-wrap > button {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =============================================
+           NAVIGATION
+           ============================================= */
         .nav {
             position: sticky;
             top: 0;
@@ -107,611 +118,132 @@
             letter-spacing: -0.5px;
         }
         .logo-mark {
-            width: 42px;
-            height: 42px;
+            width: 42px; height: 42px;
             background: var(--accent);
             border-radius: 42% 58% 63% 37% / 51% 43% 57% 49%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0c0b10;
-            font-size: 1.2rem;
-            font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            color: #0c0b10; font-size: 1.2rem; font-weight: bold;
             transition: border-radius 0.4s ease;
         }
-        .logo:hover .logo-mark {
-            border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%;
-        }
+        .logo:hover .logo-mark { border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%; }
 
         .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 2.2rem;
-            list-style: none;
+            display: flex; align-items: center; gap: 2.2rem; list-style: none;
         }
         .nav-links a {
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 500;
-            font-size: 1rem;
-            position: relative;
-            padding-bottom: 4px;
-            font-family: var(--font-body);
-            transition: color 0.2s;
+            text-decoration: none; color: var(--text); font-weight: 500;
+            font-size: 1rem; position: relative; padding-bottom: 4px;
+            font-family: var(--font-body); transition: color 0.2s;
         }
         .nav-links a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-            border-radius: 2px;
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 0; height: 2px; background: var(--accent);
+            transition: width 0.3s ease; border-radius: 2px;
         }
-        .nav-links a:hover::before {
-            width: 100%;
-        }
+        .nav-links a:hover::before { width: 100%; }
         .btn-nav {
-            background: var(--accent2);
-            color: #0c0b10 !important;
-            padding: 0.6rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 700;
-            transition: all var(--transition);
-            box-shadow: 0 4px 12px rgba(124,140,174,0.3);
+            background: var(--accent2); color: #0c0b10 !important;
+            padding: 0.6rem 1.5rem; border-radius: 40px; font-weight: 700;
+            transition: all var(--transition); box-shadow: 0 4px 12px rgba(124,140,174,0.3);
         }
-        .btn-nav:hover {
-            background: #8fa0bd;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(124,140,174,0.5);
-            color: #000 !important;
-        }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        .hamburger span {
-            width: 30px;
-            height: 3px;
-            background: var(--text);
-            border-radius: 3px;
-            transition: var(--transition);
-        }
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
+        .btn-nav:hover { background: #8fa0bd; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124,140,174,0.5); color: #000 !important; }
+        .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; background: none; border: none; }
+        .hamburger span { width: 30px; height: 3px; background: var(--text); border-radius: 3px; transition: var(--transition); }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
-        /* Sections */
-        .section {
-            position: relative;
-            z-index: 1;
-            padding: 5rem 2rem;
-        }
-        .section-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .section-title {
-            font-family: var(--font-display);
-            font-size: 2.8rem;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.03em;
-            margin-bottom: 1rem;
-            color: var(--text);
-        }
-        .section-sub {
-            font-size: 1.2rem;
-            color: var(--text-soft);
-            max-width: 550px;
-            line-height: 1.6;
-        }
+        .section { position: relative; z-index: 1; padding: 5rem 2rem; }
+        .section-inner { max-width: 1100px; margin: 0 auto; }
+        .section-title { font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.03em; margin-bottom: 1rem; color: var(--text); }
+        .section-sub { font-size: 1.2rem; color: var(--text-soft); max-width: 550px; line-height: 1.6; }
 
-        /* Hero */
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 3rem;
-            align-items: center;
-        }
-        .hero-text h1 {
-            font-family: var(--font-display);
-            font-size: 4rem;
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -0.04em;
-            margin-bottom: 1.2rem;
-        }
-        .hero-text h1 span {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .hero-text p {
-            font-size: 1.25rem;
-            color: var(--text-soft);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: var(--font-body);
-            font-size: 1rem;
-        }
-        .btn-primary {
-            background: var(--accent2);
-            color: #0c0b10;
-            box-shadow: 0 6px 18px rgba(124,140,174,0.4);
-        }
-        .btn-primary:hover {
-            background: #8fa0bd;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 26px rgba(124,140,174,0.6);
-            color: #000;
-        }
-        .btn-outline {
-            background: transparent;
-            color: var(--accent2);
-            border: 2px solid var(--accent2);
-        }
-        .btn-outline:hover {
-            background: rgba(124,140,174,0.15);
-            transform: translateY(-3px);
-            color: #d9d4cc;
-            border-color: #a0b0cc;
-        }
+        .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center; }
+        .hero-text h1 { font-family: var(--font-display); font-size: 4rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; margin-bottom: 1.2rem; }
+        .hero-text h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-text p { font-size: 1.25rem; color: var(--text-soft); margin-bottom: 2rem; line-height: 1.7; }
+        .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: all var(--transition); font-family: var(--font-body); font-size: 1rem; }
+        .btn-primary { background: var(--accent2); color: #0c0b10; box-shadow: 0 6px 18px rgba(124,140,174,0.4); }
+        .btn-primary:hover { background: #8fa0bd; transform: translateY(-3px); box-shadow: 0 12px 26px rgba(124,140,174,0.6); color: #000; }
+        .btn-outline { background: transparent; color: var(--accent2); border: 2px solid var(--accent2); }
+        .btn-outline:hover { background: rgba(124,140,174,0.15); transform: translateY(-3px); color: #d9d4cc; border-color: #a0b0cc; }
 
-        .hero-visual {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .circle-clock {
-            width: 340px;
-            height: 340px;
-            border-radius: 50%;
-            background: var(--surface);
-            box-shadow: var(--shadow-blob);
-            border: 2px dashed rgba(230,132,107,0.5);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: rotateSlow 60s linear infinite;
-        }
-        @keyframes rotateSlow {
-            100% { transform: rotate(360deg); }
-        }
-        .circle-inner {
-            position: absolute;
-            width: 60%;
-            height: 60%;
-            background: rgba(230,132,107,0.12);
-            border-radius: 50%;
-            backdrop-filter: blur(2px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-weight: 600;
-            color: #f0e4d8;
-            animation: counterRotate 60s linear infinite;
-        }
-        @keyframes counterRotate {
-            100% { transform: rotate(-360deg); }
-        }
-        .circle-inner .time {
-            font-size: 2.5rem;
-            font-family: var(--font-display);
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .circle-inner .day {
-            font-size: 1rem;
-            color: var(--text-soft);
-        }
-        .dot {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 0 4px rgba(230,132,107,0.3);
-        }
+        .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+        .circle-clock { width: 340px; height: 340px; border-radius: 50%; background: var(--surface); box-shadow: var(--shadow-blob); border: 2px dashed rgba(230,132,107,0.5); position: relative; display: flex; align-items: center; justify-content: center; animation: rotateSlow 60s linear infinite; }
+        @keyframes rotateSlow { 100% { transform: rotate(360deg); } }
+        .circle-inner { position: absolute; width: 60%; height: 60%; background: rgba(230,132,107,0.12); border-radius: 50%; backdrop-filter: blur(2px); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: 600; color: #f0e4d8; animation: counterRotate 60s linear infinite; }
+        @keyframes counterRotate { 100% { transform: rotate(-360deg); } }
+        .circle-inner .time { font-size: 2.5rem; font-family: var(--font-display); font-weight: 700; color: var(--accent); }
+        .circle-inner .day { font-size: 1rem; color: var(--text-soft); }
+        .dot { position: absolute; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px rgba(230,132,107,0.3); }
         .dot:nth-child(1) { top: 15%; left: 25%; background: #e6846b; }
         .dot:nth-child(2) { top: 70%; left: 10%; background: var(--accent3); box-shadow: 0 0 0 4px rgba(107,158,138,0.3);}
         .dot:nth-child(3) { bottom: 20%; right: 15%; background: var(--accent2); box-shadow: 0 0 0 4px rgba(124,140,174,0.3);}
         .dot:nth-child(4) { top: 25%; right: 20%; background: #dcb284; }
 
-        /* Fonctionnalités */
-        .features-mosaic {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.8rem;
-            margin-top: 3rem;
-        }
-        .feature-card {
-            background: var(--surface);
-            border-radius: var(--radius-card);
-            padding: 2rem 1.8rem;
-            position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-            transition: all var(--transition);
-            overflow: hidden;
-            z-index: 1;
-        }
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: -30px;
-            right: -30px;
-            width: 90px;
-            height: 90px;
-            background: var(--accent);
-            opacity: 0.08;
-            border-radius: 50%;
-            z-index: 0;
-            transition: all 0.5s ease;
-        }
-        .feature-card:hover::before {
-            width: 150px;
-            height: 150px;
-            top: -50px;
-            right: -50px;
-            opacity: 0.18;
-        }
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 22px 40px rgba(0,0,0,0.5);
-            border-color: var(--accent);
-        }
-        .feature-card h3 {
-            font-family: var(--font-display);
-            font-size: 1.3rem;
-            margin-bottom: 0.6rem;
-            position: relative;
-            z-index: 1;
-            color: var(--text);
-        }
-        .feature-card p {
-            color: var(--text-soft);
-            font-size: 0.95rem;
-            position: relative;
-            z-index: 1;
-        }
+        .features-mosaic { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; margin-top: 3rem; }
+        .feature-card { background: var(--surface); border-radius: var(--radius-card); padding: 2rem 1.8rem; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 1px solid var(--border); transition: all var(--transition); overflow: hidden; z-index: 1; }
+        .feature-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 90px; height: 90px; background: var(--accent); opacity: 0.08; border-radius: 50%; z-index: 0; transition: all 0.5s ease; }
+        .feature-card:hover::before { width: 150px; height: 150px; top: -50px; right: -50px; opacity: 0.18; }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 22px 40px rgba(0,0,0,0.5); border-color: var(--accent); }
+        .feature-card h3 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 0.6rem; position: relative; z-index: 1; color: var(--text); }
+        .feature-card p { color: var(--text-soft); font-size: 0.95rem; position: relative; z-index: 1; }
 
-        /* Timeline */
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-            margin-top: 3rem;
-            position: relative;
-            padding-left: 2.5rem;
-        }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 12px;
-            top: 8px;
-            bottom: 8px;
-            width: 3px;
-            background: linear-gradient(to bottom, var(--accent), var(--accent3));
-            border-radius: 3px;
-        }
-        .timeline-step {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start;
-            position: relative;
-        }
-        .timeline-marker {
-            width: 28px;
-            height: 28px;
-            background: var(--surface);
-            border: 3px solid var(--accent);
-            border-radius: 50%;
-            position: absolute;
-            left: -43px;
-            top: 4px;
-            box-shadow: 0 0 0 8px rgba(230,132,107,0.2);
-            z-index: 2;
-        }
-        .timeline-content {
-            background: var(--surface-elevated);
-            border-radius: var(--radius-card);
-            padding: 1.5rem 2rem;
-            flex: 1;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
-            transition: var(--transition);
-        }
-        .timeline-content:hover {
-            box-shadow: 0 14px 30px rgba(0,0,0,0.5);
-            border-color: var(--accent3);
-            transform: translateX(4px);
-        }
-        .timeline-content h4 {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
-            margin-bottom: 0.4rem;
-            color: var(--text);
-        }
-        .timeline-content p {
-            color: var(--text-soft);
-        }
+        .timeline { display: flex; flex-direction: column; gap: 2.5rem; margin-top: 3rem; position: relative; padding-left: 2.5rem; }
+        .timeline::before { content: ''; position: absolute; left: 12px; top: 8px; bottom: 8px; width: 3px; background: linear-gradient(to bottom, var(--accent), var(--accent3)); border-radius: 3px; }
+        .timeline-step { display: flex; gap: 2rem; align-items: flex-start; position: relative; }
+        .timeline-marker { width: 28px; height: 28px; background: var(--surface); border: 3px solid var(--accent); border-radius: 50%; position: absolute; left: -43px; top: 4px; box-shadow: 0 0 0 8px rgba(230,132,107,0.2); z-index: 2; }
+        .timeline-content { background: var(--surface-elevated); border-radius: var(--radius-card); padding: 1.5rem 2rem; flex: 1; box-shadow: 0 4px 16px rgba(0,0,0,0.3); border: 1px solid var(--border); transition: var(--transition); }
+        .timeline-content:hover { box-shadow: 0 14px 30px rgba(0,0,0,0.5); border-color: var(--accent3); transform: translateX(4px); }
+        .timeline-content h4 { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.4rem; color: var(--text); }
+        .timeline-content p { color: var(--text-soft); }
 
-        /* Tarifs */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        .pricing-card {
-            background: var(--surface);
-            border-radius: var(--radius-card);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            border: 2px solid var(--border);
-            transition: all var(--transition);
-            position: relative;
-            backdrop-filter: blur(2px);
-        }
-        .pricing-card.featured {
-            border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(230,132,107,0.25);
-            transform: scale(1.04);
-            background: #212028;
-        }
-        .pricing-badge {
-            position: absolute;
-            top: -14px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: #0c0b10;
-            padding: 0.4rem 1.5rem;
-            border-radius: 30px;
-            font-weight: 800;
-            font-size: 0.85rem;
-        }
-        .price {
-            font-family: var(--font-display);
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin: 1rem 0;
-            color: var(--accent);
-        }
-        .price span {
-            font-size: 1rem;
-            font-weight: 400;
-            color: var(--text-soft);
-        }
-        .pricing-card ul {
-            list-style: none;
-            margin: 1.5rem 0;
-            text-align: left;
-            padding-left: 0;
-        }
-        .pricing-card li {
-            padding: 0.5rem 0;
-            color: var(--text-soft);
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 0.95rem;
-        }
-        .pricing-card li::before {
-            content: '•';
-            color: var(--accent);
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        .btn-price {
-            width: 100%;
-            justify-content: center;
-            margin-top: 0.5rem;
-        }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+        .pricing-card { background: var(--surface); border-radius: var(--radius-card); padding: 2.5rem 2rem; text-align: center; border: 2px solid var(--border); transition: all var(--transition); position: relative; backdrop-filter: blur(2px); }
+        .pricing-card.featured { border-color: var(--accent); box-shadow: 0 20px 40px rgba(230,132,107,0.25); transform: scale(1.04); background: #212028; }
+        .pricing-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #0c0b10; padding: 0.4rem 1.5rem; border-radius: 30px; font-weight: 800; font-size: 0.85rem; }
+        .price { font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 1rem 0; color: var(--accent); }
+        .price span { font-size: 1rem; font-weight: 400; color: var(--text-soft); }
+        .pricing-card ul { list-style: none; margin: 1.5rem 0; text-align: left; padding-left: 0; }
+        .pricing-card li { padding: 0.5rem 0; color: var(--text-soft); display: flex; align-items: center; gap: 0.6rem; font-size: 0.95rem; }
+        .pricing-card li::before { content: '•'; color: var(--accent); font-weight: bold; font-size: 1.2rem; }
+        .btn-price { width: 100%; justify-content: center; margin-top: 0.5rem; }
 
-        /* Témoignages */
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        .testimonial {
-            background: var(--surface-elevated);
-            border-radius: var(--radius-card);
-            padding: 2rem;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            border-left: 6px solid var(--accent);
-            font-style: italic;
-            transition: var(--transition);
-        }
-        .testimonial:hover {
-            border-left-color: var(--accent2);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.45);
-            transform: translateY(-3px);
-        }
-        .testimonial q {
-            font-size: 1.1rem;
-            color: #e2dbd3;
-            line-height: 1.6;
-            display: block;
-        }
-        .author {
-            margin-top: 1rem;
-            font-weight: 700;
-            font-style: normal;
-            color: var(--accent);
-        }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 3rem; }
+        .testimonial { background: var(--surface-elevated); border-radius: var(--radius-card); padding: 2rem; box-shadow: 0 6px 20px rgba(0,0,0,0.3); border-left: 6px solid var(--accent); font-style: italic; transition: var(--transition); }
+        .testimonial:hover { border-left-color: var(--accent2); box-shadow: 0 14px 28px rgba(0,0,0,0.45); transform: translateY(-3px); }
+        .testimonial q { font-size: 1.1rem; color: #e2dbd3; line-height: 1.6; display: block; }
+        .author { margin-top: 1rem; font-weight: 700; font-style: normal; color: var(--accent); }
 
-        /* CTA - élégant et contrasté */
-        .cta-block {
-            background: linear-gradient(145deg, #22212a, #19181f);
-            color: var(--text);
-            text-align: center;
-            border-radius: 30px;
-            padding: 4rem 2rem;
-            margin: 2rem 0;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            border: 1px solid rgba(230,132,107,0.3);
-        }
-        .cta-block::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(230,132,107,0.1);
-            border-radius: 50%;
-            top: -80px;
-            right: -60px;
-        }
-        .cta-block h2 {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.8rem;
-            color: #fff0e6;
-        }
-        .cta-block p {
-            font-size: 1.15rem;
-            color: #cbc3b8;
-            max-width: 500px;
-            margin: 0 auto 1.5rem;
-        }
-        .btn-white {
-            background: #fff;
-            color: #1f1e24;
-            font-weight: 800;
-            padding: 0.9rem 2.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            display: inline-block;
-            transition: var(--transition);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        .btn-white:hover {
-            background: #eae6df;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 26px rgba(0,0,0,0.4);
-            color: #000;
-        }
+        .cta-block { background: linear-gradient(145deg, #22212a, #19181f); color: var(--text); text-align: center; border-radius: 30px; padding: 4rem 2rem; margin: 2rem 0; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(230,132,107,0.3); }
+        .cta-block::before { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(230,132,107,0.1); border-radius: 50%; top: -80px; right: -60px; }
+        .cta-block h2 { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.8rem; color: #fff0e6; }
+        .cta-block p { font-size: 1.15rem; color: #cbc3b8; max-width: 500px; margin: 0 auto 1.5rem; }
+        .btn-white { background: #fff; color: #1f1e24; font-weight: 800; padding: 0.9rem 2.5rem; border-radius: 40px; text-decoration: none; display: inline-block; transition: var(--transition); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .btn-white:hover { background: #eae6df; transform: translateY(-3px); box-shadow: 0 12px 26px rgba(0,0,0,0.4); color: #000; }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-soft);
-            border-top: 1px solid var(--border);
-            margin-top: 2rem;
-            font-size: 0.9rem;
-        }
-        .footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
+        .footer { text-align: center; padding: 2rem; color: var(--text-soft); border-top: 1px solid var(--border); margin-top: 2rem; font-size: 0.9rem; }
+        .footer a { color: var(--accent); text-decoration: none; }
 
         @media (max-width: 900px) {
-            .hero-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .hero-text h1 {
-                font-size: 2.8rem;
-            }
-            .hero-visual {
-                order: -1;
-                margin-bottom: 1rem;
-            }
-            .circle-clock {
-                width: 260px;
-                height: 260px;
-            }
-            .features-mosaic {
-                grid-template-columns: 1fr 1fr;
-            }
-            .pricing-grid {
-                grid-template-columns: 1fr;
-                max-width: 400px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .pricing-card.featured {
-                transform: none;
-            }
-            .testimonial-grid {
-                grid-template-columns: 1fr;
-            }
+            .hero-grid { grid-template-columns: 1fr; text-align: center; }
+            .hero-text h1 { font-size: 2.8rem; }
+            .hero-visual { order: -1; margin-bottom: 1rem; }
+            .circle-clock { width: 260px; height: 260px; }
+            .features-mosaic { grid-template-columns: 1fr 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+            .pricing-card.featured { transform: none; }
+            .testimonial-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 260px;
-                height: 100vh;
-                background: #121116;
-                backdrop-filter: blur(16px);
-                flex-direction: column;
-                padding: 5rem 2rem;
-                gap: 2rem;
-                box-shadow: -8px 0 30px rgba(0,0,0,0.7);
-                transition: right 0.35s ease;
-                z-index: 99;
-                border-left: 1px solid var(--border);
-            }
+            .nav-links { position: fixed; top: 0; right: -100%; width: 260px; height: 100vh; background: #121116; backdrop-filter: blur(16px); flex-direction: column; padding: 5rem 2rem; gap: 2rem; box-shadow: -8px 0 30px rgba(0,0,0,0.7); transition: right 0.35s ease; z-index: 99; border-left: 1px solid var(--border); }
             .nav-links.open { right: 0; }
             .hamburger { display: flex; }
-            .features-mosaic {
-                grid-template-columns: 1fr;
-                max-width: 400px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .timeline {
-                padding-left: 1.5rem;
-            }
-            .timeline-marker {
-                left: -34px;
-            }
-            .section-title {
-                font-size: 2rem;
-            }
+            .features-mosaic { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+            .timeline { padding-left: 1.5rem; }
+            .timeline-marker { left: -34px; }
+            .section-title { font-size: 2rem; }
         }
     </style>
 </head>
@@ -729,7 +261,11 @@
                 <li><a href="#features">Fonctionnalités</a></li>
                 <li><a href="#how">Fonctionnement</a></li>
                 <li><a href="#pricing">Tarifs</a></li>
-                <li><a href="#cta" class="btn-nav">Essayer</a></li>
+                <li>
+                    <span class="halftone-wrap ht-nav" data-colors="accent2">
+                        <a href="#cta" class="btn-nav">Essayer</a>
+                    </span>
+                </li>
             </ul>
             <button class="hamburger" id="hamburger" aria-label="Menu">
                 <span></span><span></span><span></span>
@@ -743,7 +279,9 @@
                 <h1>Votre temps <br><span>magnifié</span></h1>
                 <p>TimeTabl réinvente la planification. Un agenda qui s'adapte à votre rythme, sans rigidité ni friction.</p>
                 <div class="hero-buttons">
-                    <a href="#cta" class="btn btn-primary">Commencer l'expérience</a>
+                    <span class="halftone-wrap" data-colors="primary">
+                        <a href="#cta" class="btn btn-primary">Commencer l'expérience</a>
+                    </span>
                     <a href="#how" class="btn btn-outline">Voir comment ça marche</a>
                 </div>
             </div>
@@ -764,30 +302,12 @@
             <h2 class="section-title">Une nouvelle approche du planning</h2>
             <p class="section-sub">Nous avons repensé chaque interaction pour que votre agenda devienne un allié, pas une contrainte.</p>
             <div class="features-mosaic">
-                <div class="feature-card">
-                    <h3>Flexibilité organique</h3>
-                    <p>Les créneaux s'adaptent naturellement. Glissez, étirez, fusionnez sans contrainte.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Esthétique apaisante</h3>
-                    <p>Des formes douces et des couleurs qui respirent. Votre planning devient un espace visuel agréable.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Intelligence contextuelle</h3>
-                    <p>TimeTabl apprend de vos habitudes et suggère les meilleurs créneaux sans vous interrompre.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Collaboration fluide</h3>
-                    <p>Partagez une vue d'ensemble ou des détails précis, avec une synchronisation immédiate.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Mode focus</h3>
-                    <p>Activez le mode silence pour ne voir que l'essentiel et laisser votre esprit respirer.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Rétrospective visuelle</h3>
-                    <p>Revivez vos semaines passées comme une histoire, pour mieux construire la suite.</p>
-                </div>
+                <div class="feature-card"><h3>Flexibilité organique</h3><p>Les créneaux s'adaptent naturellement. Glissez, étirez, fusionnez sans contrainte.</p></div>
+                <div class="feature-card"><h3>Esthétique apaisante</h3><p>Des formes douces et des couleurs qui respirent. Votre planning devient un espace visuel agréable.</p></div>
+                <div class="feature-card"><h3>Intelligence contextuelle</h3><p>TimeTabl apprend de vos habitudes et suggère les meilleurs créneaux sans vous interrompre.</p></div>
+                <div class="feature-card"><h3>Collaboration fluide</h3><p>Partagez une vue d'ensemble ou des détails précis, avec une synchronisation immédiate.</p></div>
+                <div class="feature-card"><h3>Mode focus</h3><p>Activez le mode silence pour ne voir que l'essentiel et laisser votre esprit respirer.</p></div>
+                <div class="feature-card"><h3>Rétrospective visuelle</h3><p>Revivez vos semaines passées comme une histoire, pour mieux construire la suite.</p></div>
             </div>
         </div>
     </section>
@@ -797,27 +317,9 @@
             <h2 class="section-title">Comment ça fonctionne</h2>
             <p class="section-sub">Trois étapes simples pour organiser votre temps autrement.</p>
             <div class="timeline">
-                <div class="timeline-step">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h4>1. Définissez vos priorités</h4>
-                        <p>Créez vos grands blocs de travail, de réunion et de pause. Comme poser les fondations d'une semaine équilibrée.</p>
-                    </div>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h4>2. Ajoutez vos rendez-vous</h4>
-                        <p>Les créneaux se placent automatiquement aux bons endroits. L'outil détecte les conflits et propose des ajustements.</p>
-                    </div>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h4>3. Visualisez et ajustez</h4>
-                        <p>Prenez du recul sur votre planning. Zoomez, déplacez un élément, et l'ensemble s'harmonise en temps réel.</p>
-                    </div>
-                </div>
+                <div class="timeline-step"><div class="timeline-marker"></div><div class="timeline-content"><h4>1. Définissez vos priorités</h4><p>Créez vos grands blocs de travail, de réunion et de pause. Comme poser les fondations d'une semaine équilibrée.</p></div></div>
+                <div class="timeline-step"><div class="timeline-marker"></div><div class="timeline-content"><h4>2. Ajoutez vos rendez-vous</h4><p>Les créneaux se placent automatiquement aux bons endroits. L'outil détecte les conflits et propose des ajustements.</p></div></div>
+                <div class="timeline-step"><div class="timeline-marker"></div><div class="timeline-content"><h4>3. Visualisez et ajustez</h4><p>Prenez du recul sur votre planning. Zoomez, déplacez un élément, et l'ensemble s'harmonise en temps réel.</p></div></div>
             </div>
         </div>
     </section>
@@ -830,35 +332,22 @@
                 <div class="pricing-card">
                     <h3>Essentiel</h3>
                     <div class="price">0 €<span>/mois</span></div>
-                    <ul>
-                        <li>1 utilisateur</li>
-                        <li>Planning basique</li>
-                        <li>Vue hebdomadaire</li>
-                        <li>Export image</li>
-                    </ul>
+                    <ul><li>1 utilisateur</li><li>Planning basique</li><li>Vue hebdomadaire</li><li>Export image</li></ul>
                     <a href="#" class="btn btn-outline btn-price">Commencer</a>
                 </div>
                 <div class="pricing-card featured">
                     <div class="pricing-badge">Populaire</div>
                     <h3>Pro</h3>
                     <div class="price">19 €<span>/mois</span></div>
-                    <ul>
-                        <li>Jusqu'à 10 utilisateurs</li>
-                        <li>Intelligence adaptative</li>
-                        <li>Vues multiples</li>
-                        <li>Intégrations Slack, Calendar</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary btn-price">Essayer Pro</a>
+                    <ul><li>Jusqu'à 10 utilisateurs</li><li>Intelligence adaptative</li><li>Vues multiples</li><li>Intégrations Slack, Calendar</li></ul>
+                    <span class="halftone-wrap" data-colors="primary" style="display:block; margin-top:0.5rem;">
+                        <a href="#" class="btn btn-primary btn-price">Essayer Pro</a>
+                    </span>
                 </div>
                 <div class="pricing-card">
                     <h3>Équipe</h3>
                     <div class="price">49 €<span>/mois</span></div>
-                    <ul>
-                        <li>Utilisateurs illimités</li>
-                        <li>Personnalisation avancée</li>
-                        <li>API & webhooks</li>
-                        <li>Support dédié</li>
-                    </ul>
+                    <ul><li>Utilisateurs illimités</li><li>Personnalisation avancée</li><li>API & webhooks</li><li>Support dédié</li></ul>
                     <a href="#" class="btn btn-outline btn-price">Contacter</a>
                 </div>
             </div>
@@ -869,22 +358,10 @@
         <div class="section-inner">
             <h2 class="section-title">Ils utilisent TimeTabl</h2>
             <div class="testimonial-grid">
-                <div class="testimonial">
-                    <q>TimeTabl a transformé mon chaos créatif en une organisation claire. Je ne subis plus mon planning, je le construis.</q>
-                    <div class="author">— Clara M., designer indépendante</div>
-                </div>
-                <div class="testimonial">
-                    <q>L'interface est d'une fluidité rare. Mon équipe l'a adoptée sans formation, tout est devenu plus simple.</q>
-                    <div class="author">— Lucas B., fondateur de startup</div>
-                </div>
-                <div class="testimonial">
-                    <q>Enfin un logiciel qui respecte la façon dont je travaille. L'esthétique sobre m'aide à me concentrer.</q>
-                    <div class="author">— Emma R., professeure d'université</div>
-                </div>
-                <div class="testimonial">
-                    <q>Je gère 50 collaborateurs avec une sérénité nouvelle. Les conflits de planning ont disparu.</q>
-                    <div class="author">— Marc L., directeur de clinique</div>
-                </div>
+                <div class="testimonial"><q>TimeTabl a transformé mon chaos créatif en une organisation claire. Je ne subis plus mon planning, je le construis.</q><div class="author">— Clara M., designer indépendante</div></div>
+                <div class="testimonial"><q>L'interface est d'une fluidité rare. Mon équipe l'a adoptée sans formation, tout est devenu plus simple.</q><div class="author">— Lucas B., fondateur de startup</div></div>
+                <div class="testimonial"><q>Enfin un logiciel qui respecte la façon dont je travaille. L'esthétique sobre m'aide à me concentrer.</q><div class="author">— Emma R., professeure d'université</div></div>
+                <div class="testimonial"><q>Je gère 50 collaborateurs avec une sérénité nouvelle. Les conflits de planning ont disparu.</q><div class="author">— Marc L., directeur de clinique</div></div>
             </div>
         </div>
     </section>
@@ -894,7 +371,9 @@
             <div class="cta-block">
                 <h2>Prêt à simplifier votre planning ?</h2>
                 <p>Rejoignez les équipes qui optimisent leur temps avec TimeTabl. Essayez gratuitement pendant 30 jours.</p>
-                <a href="#" class="btn-white">Essayer TimeTabl gratuitement</a>
+                <span class="halftone-wrap" data-colors="warm">
+                    <a href="#" class="btn-white">Essayer TimeTabl gratuitement</a>
+                </span>
             </div>
         </div>
     </section>
@@ -906,25 +385,186 @@
     <script>
         function updateClock() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            const dayStr = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' });
-            document.getElementById('liveTime').textContent = timeStr;
-            document.getElementById('liveDay').textContent = dayStr;
+            document.getElementById('liveTime').textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('liveDay').textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' });
         }
         updateClock();
         setInterval(updateClock, 1000);
 
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('navLinks');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navLinks.classList.toggle('open');
-        });
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('open');
-            });
+        hamburger.addEventListener('click', () => { hamburger.classList.toggle('active'); navLinks.classList.toggle('open'); });
+        navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { hamburger.classList.remove('active'); navLinks.classList.remove('open'); }));
+
+        /* =============================================
+           HALFTONE GRADIENT ENGINE
+           ============================================= */
+        const PALETTES = {
+            primary: [{ r:124, g:140, b:174 }, { r:107, g:158, b:138 }, { r:230, g:132, b:107 }],
+            accent2: [{ r:124, g:140, b:174 }, { r:107, g:158, b:138 }, { r:230, g:132, b:107 }],
+            warm:    [{ r:230, g:132, b:107 }, { r:220, g:178, b:132 }, { r:124, g:140, b:174 }],
+        };
+
+        function smoothstep(e0, e1, x) {
+            const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+            return t * t * (3 - 2 * t);
+        }
+
+        function mulberry32(seed) {
+            return function() {
+                seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+                let z = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                z = z + Math.imul(z ^ z >>> 7, 61 | z) ^ z;
+                return ((z ^ z >>> 14) >>> 0) / 4294967296;
+            };
+        }
+
+        // 4-pointed star, fixed orientation (no spin)
+        function drawStar(ctx, x, y, size) {
+            for (let i = 0; i < 4; i++) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(i * Math.PI / 2);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo( size * 0.15, size * 0.15,  size * 0.08, size * 0.52, 0, size);
+                ctx.bezierCurveTo(-size * 0.08, size * 0.52, -size * 0.15, size * 0.15, 0, 0);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function buildHalftone(wrap) {
+            const palette = PALETTES[wrap.dataset.colors] || PALETTES.primary;
+            const canvas = document.createElement('canvas');
+            canvas.className = 'ht-canvas';
+            wrap.insertBefore(canvas, wrap.firstChild);
+
+            const STEP = 12;
+            let particles = [];
+
+            function buildParticles() {
+                particles = [];
+                const W = canvas.width, H = canvas.height;
+                // Button occupies the center of the canvas (wrap has padding built in via CSS)
+                // We detect where the actual button child sits
+                const btn = wrap.querySelector('a, button');
+                if (!btn) return;
+                const wR = wrap.getBoundingClientRect();
+                const bR = btn.getBoundingClientRect();
+                // button position in canvas coords
+                const btnX0 = bR.left - wR.left;
+                const btnY0 = bR.top  - wR.top;
+                const btnX1 = btnX0 + bR.width;
+                const btnY1 = btnY0 + bR.height;
+                const btnCx = (btnX0 + btnX1) / 2;
+                const btnCy = (btnY0 + btnY1) / 2;
+                const btnRx = bR.width  / 2;
+                const btnRy = bR.height / 2;
+
+                const rng = mulberry32(Math.round(W * 31 + H * 7));
+                const cols = Math.ceil(W / STEP) + 2;
+                const rows = Math.ceil(H / STEP) + 2;
+
+                for (let row = -1; row <= rows; row++) {
+                    for (let col = -1; col <= cols; col++) {
+                        const gx = col * STEP + (row % 2 === 0 ? 0 : STEP * 0.5);
+                        const gy = row * STEP * 0.9;
+                        // small random jitter breaks the perfect grid
+                        const x = gx + (rng() - 0.5) * STEP * 0.4;
+                        const y = gy + (rng() - 0.5) * STEP * 0.4;
+
+                        // distance from nearest button edge
+                        const ex = Math.max(0, Math.abs(x - btnCx) - btnRx);
+                        const ey = Math.max(0, Math.abs(y - btnCy) - btnRy);
+                        const edgeDist = Math.sqrt(ex*ex + ey*ey);
+
+                        // keep only outside the button, up to canvas edge
+                        if (edgeDist < 4) continue;
+
+                        // fade: max density just outside btn, zero toward canvas border
+                        const maxDist = Math.min(btnCx, btnCy, W - btnCx, H - btnCy) * 0.92;
+                        const presence = (1 - smoothstep(0, maxDist, edgeDist))
+                                       * smoothstep(4, 14, edgeDist);
+                        if (presence < 0.03) continue;
+
+                        // each particle stores its position + a stable phase offset
+                        // The wave phase is driven by distance from btn center (like a ripple)
+                        const distFromCenter = Math.sqrt((x-btnCx)**2 + (y-btnCy)**2);
+                        const phaseOffset = distFromCenter * 0.045 + rng() * Math.PI * 0.6;
+
+                        // color angle for palette lookup
+                        const colorAngle = Math.atan2(y - btnCy, x - btnCx);
+
+                        const baseSize = (1.4 + rng() * 1.8) * (0.35 + presence * 0.65);
+
+                        particles.push({ x, y, presence, phaseOffset, colorAngle, baseSize, distFromCenter });
+                    }
+                }
+            }
+
+            function resize() {
+                const r = wrap.getBoundingClientRect();
+                canvas.width  = Math.round(r.width);
+                canvas.height = Math.round(r.height);
+                buildParticles();
+            }
+
+            function draw(ts) {
+                const t = ts * 0.001;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Global wave: two slow sine planes travelling in slightly different directions
+                // Each particle samples the wave at its position → coherent ripple across the field
+                const waveFreq  = 0.022;  // spatial frequency (lower = wider waves)
+                const waveSpeed = 0.55;   // seconds per full cycle
+                const waveDir1  = 0.3;    // angle of first wave plane (radians)
+                const waveDir2  = 2.1;    // angle of second wave plane
+
+                for (const p of particles) {
+                    // Project position onto wave direction vectors
+                    const proj1 = p.x * Math.cos(waveDir1) + p.y * Math.sin(waveDir1);
+                    const proj2 = p.x * Math.cos(waveDir2) + p.y * Math.sin(waveDir2);
+
+                    // Two overlapping waves + subtle per-particle offset for slight irregularity
+                    const wave = 0.55 * Math.sin(proj1 * waveFreq - t * waveSpeed * Math.PI * 2 + p.phaseOffset * 0.25)
+                               + 0.45 * Math.sin(proj2 * waveFreq * 0.7 - t * waveSpeed * 0.65 * Math.PI * 2 + p.phaseOffset * 0.15);
+
+                    // wave in [-1,1] → brightness in [0,1], smooth
+                    const brightness = 0.5 + 0.5 * wave;
+
+                    const alpha = p.presence * (0.25 + brightness * 0.65);
+                    if (alpha < 0.02) continue;
+
+                    // Color: angle around btn + slow global drift
+                    const colorT = (((p.colorAngle + t * 0.12) / (Math.PI * 2)) + 10) % 1;
+                    const pIdx   = colorT * (palette.length - 1);
+                    const lo = palette[Math.floor(pIdx)];
+                    const hi = palette[Math.ceil(pIdx) % palette.length];
+                    const mix = pIdx % 1;
+                    const r = Math.round(lo.r + (hi.r - lo.r) * mix);
+                    const g = Math.round(lo.g + (hi.g - lo.g) * mix);
+                    const b = Math.round(lo.b + (hi.b - lo.b) * mix);
+
+                    ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+
+                    // size pulses gently with the wave (no rotation)
+                    const sz = p.baseSize * (0.7 + 0.3 * brightness);
+                    drawStar(ctx, p.x, p.y, sz);
+                }
+
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            requestAnimationFrame(draw);
+            new ResizeObserver(resize).observe(wrap);
+        }
+
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.halftone-wrap').forEach(buildHalftone);
         });
     </script>
 </body>
