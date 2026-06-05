@@ -1,665 +1,904 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TimeTabl — Planning intelligent</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeTabl — Planning fluide et intelligent</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fcf9f0;
+            --surface: #ffffff;
+            --text: #2d2a26;
+            --text-soft: #6b625a;
+            --accent: #e07a5f;
+            --accent2: #3d405b;
+            --accent3: #81b29a;
+            --border: #e6dfd3;
+            --radius-blob: 40% 60% 60% 40% / 50% 40% 60% 50%;
+            --radius-card: 20px;
+            --shadow-blob: 0 20px 50px rgba(0,0,0,0.05);
+            --transition: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+        }
 
-  :root {
-    --ink:    #0f0f0f;
-    --muted:  #6b6b6b;
-    --line:   #e2e2e2;
-    --bg:     #f8f7f4;
-    --white:  #ffffff;
-    --accent: #2a5c45;
-    --accent2:#d4ede3;
-    --serif:  'DM Serif Display', Georgia, serif;
-    --sans:   'DM Sans', system-ui, sans-serif;
-  }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
 
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--ink);
-    font-size: 16px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+        /* Arrière-plan organique */
+        .bg-blob {
+            position: fixed;
+            border-radius: var(--radius-blob);
+            filter: blur(100px);
+            opacity: 0.10;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-blob-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent);
+            top: -250px;
+            right: -200px;
+            animation: floatBlob 14s ease-in-out infinite alternate;
+        }
+        .bg-blob-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent3);
+            bottom: -200px;
+            left: -150px;
+            animation: floatBlob 18s ease-in-out infinite alternate-reverse;
+        }
+        .bg-blob-3 {
+            width: 350px;
+            height: 350px;
+            background: var(--accent2);
+            top: 50%;
+            left: 60%;
+            animation: floatBlob 16s ease-in-out infinite alternate;
+        }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 6vw; height: 64px;
-    background: rgba(248,247,244,0.88);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
-  }
-  .logo {
-    font-family: var(--serif);
-    font-size: 1.35rem;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a {
-    font-size: .875rem; font-weight: 400; color: var(--muted);
-    text-decoration: none; letter-spacing: .01em;
-    transition: color .2s;
-  }
-  .nav-links a:hover { color: var(--ink); }
-  .nav-cta {
-    font-size: .875rem; font-weight: 500;
-    background: var(--ink); color: var(--white);
-    border: none; padding: .55rem 1.4rem; border-radius: 6px;
-    cursor: pointer; text-decoration: none;
-    transition: background .2s, transform .15s;
-  }
-  .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(40px, 50px) scale(1.1) rotate(8deg); }
+        }
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: grid; place-items: center;
-    padding: 8rem 6vw 4rem;
-    text-align: center;
-    position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 70% 60% at 50% 10%, var(--accent2) 0%, transparent 70%);
-    opacity: .5; pointer-events: none;
-  }
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: .5rem;
-    font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--accent); background: var(--accent2);
-    padding: .35rem 1rem; border-radius: 100px;
-    margin-bottom: 2rem;
-    animation: fadeUp .7s ease both;
-  }
-  .hero-eyebrow::before {
-    content: ''; width: 6px; height: 6px;
-    background: var(--accent); border-radius: 50%;
-  }
-  h1 {
-    font-family: var(--serif);
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    line-height: 1.08; letter-spacing: -.03em;
-    color: var(--ink); max-width: 14ch; margin: 0 auto 1.5rem;
-    animation: fadeUp .7s .1s ease both;
-  }
-  h1 em { font-style: italic; color: var(--accent); }
-  .hero-sub {
-    font-size: 1.125rem; font-weight: 300; color: var(--muted);
-    max-width: 46ch; margin: 0 auto 2.5rem;
-    animation: fadeUp .7s .2s ease both;
-  }
-  .hero-actions {
-    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    animation: fadeUp .7s .3s ease both;
-  }
-  .btn-primary {
-    font-family: var(--sans); font-size: .95rem; font-weight: 500;
-    background: var(--ink); color: var(--white);
-    border: 2px solid var(--ink);
-    padding: .8rem 2rem; border-radius: 8px;
-    cursor: pointer; text-decoration: none;
-    transition: background .2s, color .2s, transform .15s;
-  }
-  .btn-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
-  .btn-ghost {
-    font-family: var(--sans); font-size: .95rem; font-weight: 400;
-    background: transparent; color: var(--ink);
-    border: 2px solid var(--line);
-    padding: .8rem 2rem; border-radius: 8px;
-    cursor: pointer; text-decoration: none;
-    transition: border-color .2s, transform .15s;
-  }
-  .btn-ghost:hover { border-color: var(--ink); transform: translateY(-2px); }
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(252, 249, 240, 0.8);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 2rem;
+        }
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: var(--accent);
+            border-radius: 42% 58% 63% 37% / 51% 43% 57% 49%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: border-radius 0.4s ease;
+        }
+        .logo:hover .logo-mark {
+            border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%;
+        }
 
-  /* ── MOCKUP ── */
-  .mockup-wrap {
-    width: min(860px, 90vw); margin: 4rem auto 0;
-    animation: fadeUp .8s .4s ease both;
-  }
-  .mockup-bar {
-    background: #e8e8e5; border-radius: 12px 12px 0 0;
-    padding: .65rem 1rem; display: flex; align-items: center; gap: .5rem;
-  }
-  .dot { width:11px; height:11px; border-radius:50%; }
-  .dot-r { background: #ff5f57; } .dot-y { background: #ffbd2e; } .dot-g { background: #28c840; }
-  .mockup-body {
-    background: var(--white);
-    border: 1px solid var(--line); border-top: none;
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
-    box-shadow: 0 24px 80px -12px rgba(0,0,0,.13);
-  }
-  .calendar-ui {
-    display: grid; grid-template-columns: 200px 1fr; min-height: 360px;
-  }
-  .cal-sidebar {
-    background: #f4f3f0; border-right: 1px solid var(--line);
-    padding: 1.25rem;
-  }
-  .cal-mini-month { margin-bottom: 1.5rem; }
-  .mini-month-label {
-    font-size: .7rem; font-weight: 500; letter-spacing: .08em;
-    text-transform: uppercase; color: var(--muted); margin-bottom: .6rem;
-  }
-  .mini-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
-  .mini-cell {
-    aspect-ratio: 1; display: grid; place-items: center;
-    font-size: .6rem; color: var(--muted); border-radius: 3px;
-  }
-  .mini-cell.today { background: var(--accent); color: #fff; font-weight: 500; }
-  .mini-cell.has-event { background: var(--accent2); color: var(--accent); font-weight: 500; }
-  .sidebar-label { font-size: .65rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
-  .team-item { display: flex; align-items: center; gap: .5rem; margin-bottom: .45rem; cursor: pointer; }
-  .avatar { width:22px; height:22px; border-radius:50%; font-size:.58rem; color:#fff; display:grid; place-items:center; font-weight:600; flex-shrink:0; }
-  .team-name { font-size: .72rem; color: var(--ink); }
-  .cal-main { padding: 1rem; display:flex; flex-direction:column; gap:.5rem; }
-  .cal-header { display: flex; align-items: center; gap: 1rem; }
-  .cal-title { font-family: var(--serif); font-size: 1rem; color: var(--ink); }
-  .cal-nav { display:flex; gap:.25rem; }
-  .cal-btn { width:24px;height:24px; border:1px solid var(--line); background:var(--white); border-radius:4px; cursor:pointer; display:grid; place-items:center; font-size:.7rem; color:var(--muted); }
-  .week-grid { display: grid; grid-template-columns: 48px repeat(5,1fr); gap:3px; flex:1; }
-  .week-label { font-size:.6rem; color:var(--muted); text-align:center; padding:.2rem; }
-  .hour-label { font-size:.55rem; color:var(--muted); text-align:right; padding-right:.4rem; line-height:1; padding-top:.15rem; }
-  .slot { height: 22px; border-radius: 3px; }
-  .slot.free { background: #f0efe9; }
-  .event-block {
-    border-radius: 4px; padding: .2rem .45rem; font-size:.6rem; font-weight:500;
-    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-    height: 22px; display:flex; align-items:center;
-  }
-  .ev-green { background: var(--accent2); color: var(--accent); }
-  .ev-blue  { background: #ddeaf5; color: #2a5070; }
-  .ev-amber { background: #fdefd5; color: #7a4a00; }
-  .ev-rose  { background: #fde4e4; color: #7a2020; }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 1rem;
+            position: relative;
+            padding-bottom: 4px;
+            font-family: var(--font-body);
+        }
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+        .btn-nav {
+            background: var(--accent2);
+            color: #fff !important;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all var(--transition);
+            box-shadow: 0 4px 12px rgba(61,64,91,0.2);
+        }
+        .btn-nav:hover {
+            background: #2b2d44;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(61,64,91,0.3);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
 
-  /* ── STATS ── */
-  .stats {
-    padding: 5rem 6vw;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2px; background: var(--line);
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  }
-  .stat-item {
-    background: var(--bg); padding: 2.5rem 2rem;
-    text-align: center;
-  }
-  .stat-num {
-    font-family: var(--serif); font-size: 3rem;
-    letter-spacing: -.04em; color: var(--ink); line-height: 1;
-    margin-bottom: .4rem;
-  }
-  .stat-num span { color: var(--accent); }
-  .stat-label { font-size: .82rem; color: var(--muted); font-weight: 300; }
+        /* Sections */
+        .section {
+            position: relative;
+            z-index: 1;
+            padding: 5rem 2rem;
+        }
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .section-sub {
+            font-size: 1.2rem;
+            color: var(--text-soft);
+            max-width: 550px;
+            line-height: 1.6;
+        }
 
-  /* ── FEATURES ── */
-  section { padding: 6rem 6vw; }
-  .section-eyebrow {
-    font-size: .75rem; font-weight: 500; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--accent);
-    margin-bottom: 1rem; display: block;
-  }
-  h2 {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 4vw, 3rem);
-    letter-spacing: -.03em; line-height: 1.1;
-    margin-bottom: 1rem; color: var(--ink);
-  }
-  .section-sub { font-size: 1rem; color: var(--muted); font-weight: 300; max-width: 52ch; line-height: 1.7; }
+        /* Hero */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .hero-text h1 {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.2rem;
+        }
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--text-soft);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background: var(--accent2);
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(61,64,91,0.25);
+        }
+        .btn-primary:hover {
+            background: #2b2d44;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(61,64,91,0.35);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--accent2);
+            border: 2px solid var(--accent2);
+        }
+        .btn-outline:hover {
+            background: rgba(61,64,91,0.06);
+            transform: translateY(-3px);
+        }
 
-  .features-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5px; margin-top: 4rem; background: var(--line);
-    border: 1px solid var(--line);
-  }
-  .feat {
-    background: var(--bg); padding: 2.5rem;
-    transition: background .2s;
-  }
-  .feat:hover { background: var(--white); }
-  .feat-icon {
-    width: 44px; height: 44px; border-radius: 10px;
-    background: var(--accent2); color: var(--accent);
-    display: grid; place-items: center; font-size: 1.2rem;
-    margin-bottom: 1.25rem;
-  }
-  .feat h3 {
-    font-family: var(--serif); font-size: 1.15rem;
-    letter-spacing: -.02em; margin-bottom: .6rem; color: var(--ink);
-  }
-  .feat p { font-size: .875rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .circle-clock {
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            background: var(--surface);
+            box-shadow: var(--shadow-blob);
+            border: 2px dashed var(--border);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: rotateSlow 60s linear infinite;
+        }
+        @keyframes rotateSlow {
+            100% { transform: rotate(360deg); }
+        }
+        .circle-inner {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            background: rgba(224,122,95,0.08);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent2);
+            animation: counterRotate 60s linear infinite;
+        }
+        @keyframes counterRotate {
+            100% { transform: rotate(-360deg); }
+        }
+        .circle-inner .time {
+            font-size: 2.5rem;
+            font-family: var(--font-display);
+            font-weight: 700;
+        }
+        .circle-inner .day {
+            font-size: 1rem;
+            color: var(--text-soft);
+        }
+        .dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(224,122,95,0.2);
+        }
+        .dot:nth-child(1) { top: 15%; left: 25%; }
+        .dot:nth-child(2) { top: 70%; left: 10%; background: var(--accent3); }
+        .dot:nth-child(3) { bottom: 20%; right: 15%; background: var(--accent2); }
+        .dot:nth-child(4) { top: 25%; right: 20%; }
 
-  /* ── HOW ── */
-  .how { background: var(--white); }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 3rem; margin-top: 3.5rem; }
-  .step { position: relative; }
-  .step-num {
-    font-family: var(--serif); font-size: 3.5rem; color: var(--accent2);
-    letter-spacing: -.04em; line-height: 1; margin-bottom: .75rem;
-  }
-  .step h3 { font-family: var(--serif); font-size: 1.1rem; margin-bottom: .5rem; letter-spacing: -.02em; }
-  .step p { font-size: .875rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
+        /* Fonctionnalités */
+        .features-mosaic {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.8rem;
+            margin-top: 3rem;
+        }
+        .feature-card {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            padding: 2rem 1.8rem;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+            overflow: hidden;
+            z-index: 1;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 90px;
+            height: 90px;
+            background: var(--accent);
+            opacity: 0.04;
+            border-radius: 50%;
+            z-index: 0;
+            transition: all 0.5s ease;
+        }
+        .feature-card:hover::before {
+            width: 150px;
+            height: 150px;
+            top: -50px;
+            right: -50px;
+            opacity: 0.08;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+        .feature-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            margin-bottom: 0.6rem;
+            position: relative;
+            z-index: 1;
+        }
+        .feature-card p {
+            color: var(--text-soft);
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
 
-  /* ── TESTIMONIALS ── */
-  .testimonials { background: var(--ink); color: var(--white); }
-  .testimonials .section-eyebrow { color: var(--accent2); }
-  .testimonials h2 { color: var(--white); }
-  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1.5rem; margin-top: 3.5rem; }
-  .testi {
-    border: 1px solid rgba(255,255,255,.1); border-radius: 10px;
-    padding: 2rem; background: rgba(255,255,255,.04);
-    transition: background .2s;
-  }
-  .testi:hover { background: rgba(255,255,255,.07); }
-  .testi-quote { font-size: .95rem; line-height: 1.7; color: rgba(255,255,255,.8); margin-bottom: 1.5rem; font-weight: 300; }
-  .testi-author { display: flex; align-items: center; gap: .75rem; }
-  .testi-avatar { width: 36px; height: 36px; border-radius: 50%; display:grid; place-items:center; font-size:.75rem; font-weight:600; color:#fff; }
-  .testi-name { font-size: .82rem; font-weight: 500; color: var(--white); }
-  .testi-role { font-size: .75rem; color: rgba(255,255,255,.45); }
+        /* Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            margin-top: 3rem;
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), var(--accent3));
+            border-radius: 3px;
+        }
+        .timeline-step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            position: relative;
+        }
+        .timeline-marker {
+            width: 28px;
+            height: 28px;
+            background: var(--surface);
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            position: absolute;
+            left: -43px;
+            top: 4px;
+            box-shadow: 0 0 0 8px rgba(224,122,95,0.1);
+            z-index: 2;
+        }
+        .timeline-content {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            padding: 1.5rem 2rem;
+            flex: 1;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .timeline-content:hover {
+            box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+            border-color: var(--accent);
+        }
+        .timeline-content h4 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+        .timeline-content p {
+            color: var(--text-soft);
+        }
 
-  /* ── PRICING ── */
-  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1.5rem; margin-top: 3.5rem; }
-  .plan {
-    border: 1px solid var(--line); border-radius: 12px;
-    padding: 2rem; background: var(--white);
-    transition: transform .2s, box-shadow .2s;
-  }
-  .plan:hover { transform: translateY(-4px); box-shadow: 0 16px 48px -8px rgba(0,0,0,.1); }
-  .plan.featured { border-color: var(--accent); background: var(--ink); color: var(--white); }
-  .plan-name { font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
-  .plan.featured .plan-name { color: var(--accent2); }
-  .plan-price { font-family: var(--serif); font-size: 2.8rem; letter-spacing: -.04em; line-height: 1; margin-bottom: .25rem; }
-  .plan-per { font-size: .8rem; color: var(--muted); margin-bottom: 1.5rem; font-weight: 300; }
-  .plan.featured .plan-per { color: rgba(255,255,255,.5); }
-  .plan-divider { border: none; border-top: 1px solid var(--line); margin: 1.25rem 0; }
-  .plan.featured .plan-divider { border-color: rgba(255,255,255,.12); }
-  .plan-features { list-style: none; display: flex; flex-direction: column; gap: .65rem; margin-bottom: 1.75rem; }
-  .plan-features li { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: .6rem; font-weight: 300; }
-  .plan.featured .plan-features li { color: rgba(255,255,255,.7); }
-  .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 600; flex-shrink: 0; }
-  .plan.featured .plan-features li::before { color: var(--accent2); }
-  .plan-btn {
-    width: 100%; padding: .75rem; border-radius: 7px; font-family: var(--sans);
-    font-size: .875rem; font-weight: 500; cursor: pointer; border: 2px solid var(--ink);
-    background: transparent; color: var(--ink); transition: background .2s, color .2s;
-  }
-  .plan-btn:hover { background: var(--ink); color: var(--white); }
-  .plan.featured .plan-btn { background: var(--accent); border-color: var(--accent); color: var(--white); }
-  .plan.featured .plan-btn:hover { background: #3a7c5e; }
+        /* Tarifs */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .pricing-card {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all var(--transition);
+            position: relative;
+        }
+        .pricing-card.featured {
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(224,122,95,0.15);
+            transform: scale(1.04);
+            background: #fffbf7;
+        }
+        .pricing-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 0.4rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .price {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--accent2);
+        }
+        .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-soft);
+        }
+        .pricing-card ul {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+            padding-left: 0;
+        }
+        .pricing-card li {
+            padding: 0.5rem 0;
+            color: var(--text-soft);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+        }
+        .pricing-card li::before {
+            content: '•';
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .btn-price {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
 
-  /* ── CTA ── */
-  .cta-section {
-    text-align: center; padding: 8rem 6vw;
-    background: var(--bg); border-top: 1px solid var(--line);
-  }
-  .cta-section h2 { font-size: clamp(2.2rem, 5vw, 4rem); max-width: 18ch; margin: 0 auto 1.2rem; }
-  .cta-section p { color: var(--muted); font-weight: 300; font-size: 1rem; max-width: 44ch; margin: 0 auto 2.5rem; }
+        /* Témoignages */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .testimonial {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            padding: 2rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+            border-left: 6px solid var(--accent);
+            font-style: italic;
+            transition: var(--transition);
+        }
+        .testimonial:hover {
+            border-left-color: var(--accent2);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+        }
+        .testimonial q {
+            font-size: 1.1rem;
+            color: var(--text);
+            line-height: 1.6;
+            display: block;
+        }
+        .author {
+            margin-top: 1rem;
+            font-weight: 700;
+            font-style: normal;
+            color: var(--accent2);
+        }
 
-  /* ── FOOTER ── */
-  footer {
-    padding: 3rem 6vw;
-    border-top: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
-  }
-  .footer-logo { font-family: var(--serif); font-size: 1.2rem; letter-spacing: -.02em; color: var(--ink); }
-  .footer-logo span { color: var(--accent); }
-  .footer-links { display: flex; gap: 2rem; }
-  .footer-links a { font-size: .82rem; color: var(--muted); text-decoration: none; }
-  .footer-links a:hover { color: var(--ink); }
-  .footer-copy { font-size: .78rem; color: var(--muted); }
+        /* CTA */
+        .cta-block {
+            background: var(--accent2);
+            color: #fff;
+            text-align: center;
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(61,64,91,0.3);
+        }
+        .cta-block::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            top: -80px;
+            right: -60px;
+        }
+        .cta-block h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+        .cta-block p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+        }
+        .btn-white {
+            background: #fff;
+            color: var(--accent2);
+            font-weight: 700;
+            padding: 0.9rem 2.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            display: inline-block;
+            transition: var(--transition);
+        }
+        .btn-white:hover {
+            background: #f0ece4;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-soft);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
 
-  @media (max-width: 640px) {
-    .nav-links { display: none; }
-    .calendar-ui { grid-template-columns: 1fr; }
-    .cal-sidebar { display: none; }
-    footer { flex-direction: column; align-items: flex-start; }
-  }
-</style>
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+            .hero-visual {
+                order: -1;
+                margin-bottom: 1rem;
+            }
+            .circle-clock {
+                width: 260px;
+                height: 260px;
+            }
+            .features-mosaic {
+                grid-template-columns: 1fr 1fr;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .pricing-card.featured {
+                transform: none;
+            }
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 260px;
+                height: 100vh;
+                background: var(--bg);
+                flex-direction: column;
+                padding: 5rem 2rem;
+                gap: 2rem;
+                box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+                transition: right 0.35s ease;
+                z-index: 99;
+            }
+            .nav-links.open { right: 0; }
+            .hamburger { display: flex; }
+            .features-mosaic {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .timeline {
+                padding-left: 1.5rem;
+            }
+            .timeline-marker {
+                left: -34px;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
 
-<!-- NAV -->
-<nav>
-  <a class="logo" href="#">Time<span>Tabl</span></a>
-  <ul class="nav-links">
-    <li><a href="#features">Fonctionnalités</a></li>
-    <li><a href="#how">Comment ça marche</a></li>
-    <li><a href="#pricing">Tarifs</a></li>
-  </ul>
-  <a href="#pricing" class="nav-cta">Essai gratuit</a>
-</nav>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="logo">
+                <div class="logo-mark">⏳</div> TimeTabl
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#how">Fonctionnement</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+                <li><a href="#cta" class="btn-nav">Essayer</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div>
-    <div class="hero-eyebrow">Planning intelligent</div>
-    <h1>Organisez votre temps, <em>libérez</em> votre équipe</h1>
-    <p class="hero-sub">TimeTabl simplifie la planification des ressources et des équipes. Visualisez, partagez, ajustez — en quelques clics.</p>
-    <div class="hero-actions">
-      <a href="#pricing" class="btn-primary">Commencer gratuitement</a>
-      <a href="#features" class="btn-ghost">Voir les fonctionnalités</a>
-    </div>
-
-    <!-- Faux mockup UI -->
-    <div class="mockup-wrap">
-      <div class="mockup-bar">
-        <div class="dot dot-r"></div>
-        <div class="dot dot-y"></div>
-        <div class="dot dot-g"></div>
-      </div>
-      <div class="mockup-body">
-        <div class="calendar-ui">
-          <div class="cal-sidebar">
-            <div class="cal-mini-month">
-              <div class="mini-month-label">Juin 2026</div>
-              <div class="mini-grid">
-                <div class="mini-cell">L</div><div class="mini-cell">M</div><div class="mini-cell">M</div><div class="mini-cell">J</div><div class="mini-cell">V</div><div class="mini-cell">S</div><div class="mini-cell">D</div>
-                <div class="mini-cell">1</div><div class="mini-cell">2</div><div class="mini-cell">3</div><div class="mini-cell">4</div><div class="mini-cell today">5</div><div class="mini-cell">6</div><div class="mini-cell">7</div>
-                <div class="mini-cell has-event">8</div><div class="mini-cell">9</div><div class="mini-cell has-event">10</div><div class="mini-cell">11</div><div class="mini-cell">12</div><div class="mini-cell">13</div><div class="mini-cell">14</div>
-                <div class="mini-cell">15</div><div class="mini-cell">16</div><div class="mini-cell">17</div><div class="mini-cell has-event">18</div><div class="mini-cell">19</div><div class="mini-cell">20</div><div class="mini-cell">21</div>
-                <div class="mini-cell">22</div><div class="mini-cell">23</div><div class="mini-cell">24</div><div class="mini-cell">25</div><div class="mini-cell">26</div><div class="mini-cell">27</div><div class="mini-cell">28</div>
-                <div class="mini-cell">29</div><div class="mini-cell">30</div>
-              </div>
+    <section class="section hero">
+        <div class="section-inner hero-grid">
+            <div class="hero-text">
+                <h1>Votre temps <br><span>magnifié</span></h1>
+                <p>TimeTabl réinvente la planification. Un agenda qui s'adapte à votre rythme, sans rigidité ni friction.</p>
+                <div class="hero-buttons">
+                    <a href="#cta" class="btn btn-primary">Commencer l'expérience</a>
+                    <a href="#how" class="btn btn-outline">Voir comment ça marche</a>
+                </div>
             </div>
-            <div class="sidebar-label">Équipe</div>
-            <div class="team-item"><div class="avatar" style="background:#2a5c45">SC</div><div class="team-name">Sophie C.</div></div>
-            <div class="team-item"><div class="avatar" style="background:#2a5070">MB</div><div class="team-name">Marc B.</div></div>
-            <div class="team-item"><div class="avatar" style="background:#7a4a00">LD</div><div class="team-name">Laura D.</div></div>
-            <div class="team-item"><div class="avatar" style="background:#6b2a6b">AR</div><div class="team-name">Alex R.</div></div>
-          </div>
-          <div class="cal-main">
-            <div class="cal-header">
-              <span class="cal-title">Semaine du 2 juin</span>
-              <div class="cal-nav">
-                <button class="cal-btn">‹</button>
-                <button class="cal-btn">›</button>
-              </div>
+            <div class="hero-visual">
+                <div class="circle-clock">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    <div class="circle-inner">
+                        <div class="time" id="liveTime">--:--</div>
+                        <div class="day" id="liveDay">----</div>
+                    </div>
+                </div>
             </div>
-            <div class="week-grid">
-              <div></div>
-              <div class="week-label">Lun 2</div><div class="week-label">Mar 3</div><div class="week-label">Mer 4</div>
-              <div class="week-label" style="color:var(--accent);font-weight:500">Jeu 5</div><div class="week-label">Ven 6</div>
+        </div>
+    </section>
 
-              <div class="hour-label">09h</div>
-              <div class="event-block ev-green">Revue produit</div>
-              <div class="slot free"></div>
-              <div class="event-block ev-blue">Design sprint</div>
-              <div class="slot free"></div>
-              <div class="event-block ev-amber">Client call</div>
-
-              <div class="hour-label">10h</div>
-              <div class="slot free"></div>
-              <div class="event-block ev-rose">Formation RH</div>
-              <div class="event-block ev-blue">Design sprint</div>
-              <div class="event-block ev-green">Stand-up</div>
-              <div class="slot free"></div>
-
-              <div class="hour-label">11h</div>
-              <div class="event-block ev-amber">Comité dir.</div>
-              <div class="slot free"></div>
-              <div class="slot free"></div>
-              <div class="slot free"></div>
-              <div class="event-block ev-green">Revue Q3</div>
-
-              <div class="hour-label">14h</div>
-              <div class="slot free"></div>
-              <div class="event-block ev-green">Démo client</div>
-              <div class="slot free"></div>
-              <div class="event-block ev-blue">Atelier UX</div>
-              <div class="slot free"></div>
-
-              <div class="hour-label">15h</div>
-              <div class="event-block ev-rose">Recrutement</div>
-              <div class="event-block ev-green">Démo client</div>
-              <div class="event-block ev-amber">Budget</div>
-              <div class="event-block ev-blue">Atelier UX</div>
-              <div class="slot free"></div>
-
-              <div class="hour-label">16h</div>
-              <div class="slot free"></div>
-              <div class="slot free"></div>
-              <div class="slot free"></div>
-              <div class="event-block ev-rose">Rétro équipe</div>
-              <div class="slot free"></div>
+    <section class="section" id="features">
+        <div class="section-inner">
+            <h2 class="section-title">Une nouvelle approche du planning</h2>
+            <p class="section-sub">Nous avons repensé chaque interaction pour que votre agenda devienne un allié, pas une contrainte.</p>
+            <div class="features-mosaic">
+                <div class="feature-card">
+                    <h3>Flexibilité organique</h3>
+                    <p>Les créneaux s'adaptent naturellement. Glissez, étirez, fusionnez sans contrainte.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Esthétique apaisante</h3>
+                    <p>Des formes douces et des couleurs qui respirent. Votre planning devient un espace visuel agréable.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Intelligence contextuelle</h3>
+                    <p>TimeTabl apprend de vos habitudes et suggère les meilleurs créneaux sans vous interrompre.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Collaboration fluide</h3>
+                    <p>Partagez une vue d'ensemble ou des détails précis, avec une synchronisation immédiate.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Mode focus</h3>
+                    <p>Activez le mode silence pour ne voir que l'essentiel et laisser votre esprit respirer.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Rétrospective visuelle</h3>
+                    <p>Revivez vos semaines passées comme une histoire, pour mieux construire la suite.</p>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- STATS -->
-<div class="stats">
-  <div class="stat-item reveal">
-    <div class="stat-num">2<span>h</span></div>
-    <div class="stat-label">gagnées par semaine et par manager</div>
-  </div>
-  <div class="stat-item reveal">
-    <div class="stat-num">94<span>%</span></div>
-    <div class="stat-label">de taux de satisfaction utilisateur</div>
-  </div>
-  <div class="stat-item reveal">
-    <div class="stat-num">—40<span>%</span></div>
-    <div class="stat-label">de conflits de planning</div>
-  </div>
-  <div class="stat-item reveal">
-    <div class="stat-num">3<span>×</span></div>
-    <div class="stat-label">plus vite qu'un tableur classique</div>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section id="features">
-  <span class="section-eyebrow">Fonctionnalités</span>
-  <h2 class="reveal">Tout ce dont vous avez besoin,<br>rien de superflu</h2>
-  <p class="section-sub reveal">TimeTabl a été conçu pour les équipes qui veulent gagner du temps, pas en perdre à maîtriser un outil.</p>
-
-  <div class="features-grid">
-    <div class="feat reveal">
-      <div class="feat-icon">📅</div>
-      <h3>Vue planning multi-ressources</h3>
-      <p>Visualisez simultanément les disponibilités de toute votre équipe sur une vue semaine ou mois claire et lisible.</p>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-icon">🔄</div>
-      <h3>Glisser-déposer intuitif</h3>
-      <p>Déplacez, redimensionnez, dupliquez vos créneaux d'un simple geste. Aucun formulaire complexe.</p>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-icon">⚡</div>
-      <h3>Détection de conflits</h3>
-      <p>TimeTabl signale instantanément les chevauchements et vous propose des alternatives pour les résoudre.</p>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-icon">🔗</div>
-      <h3>Synchronisation calendriers</h3>
-      <p>Connectez Google Calendar, Outlook ou iCal. Vos plannings restent toujours à jour, sans double saisie.</p>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-icon">👥</div>
-      <h3>Partage et permissions</h3>
-      <p>Définissez qui peut voir, modifier ou exporter. Partagez un lien lecture seule à un client ou partenaire.</p>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-icon">📊</div>
-      <h3>Rapports de charge</h3>
-      <p>Analysez la répartition du temps par collaborateur, projet ou période. Exportez en PDF ou CSV.</p>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how" class="how">
-  <span class="section-eyebrow">Comment ça marche</span>
-  <h2 class="reveal">Opérationnel en <em style="font-style:italic;color:var(--accent)">5 minutes</em></h2>
-  <p class="section-sub reveal">Pas de formation, pas de migration complexe. Importez vos données existantes et démarrez.</p>
-  <div class="steps">
-    <div class="step reveal">
-      <div class="step-num">01</div>
-      <h3>Créez votre espace</h3>
-      <p>Inscrivez-vous et invitez votre équipe par e-mail. Chaque membre reçoit un accès personnalisé selon son rôle.</p>
-    </div>
-    <div class="step reveal">
-      <div class="step-num">02</div>
-      <h3>Importez vos données</h3>
-      <p>Connectez vos calendriers existants ou importez un fichier CSV. Vos plannings actuels apparaissent en quelques secondes.</p>
-    </div>
-    <div class="step reveal">
-      <div class="step-num">03</div>
-      <h3>Planifiez et collaborez</h3>
-      <p>Créez, modifiez et partagez vos plannings en temps réel. Toute l'équipe est synchronisée instantanément.</p>
-    </div>
-    <div class="step reveal">
-      <div class="step-num">04</div>
-      <h3>Analysez et optimisez</h3>
-      <p>Consultez les rapports de charge, identifiez les goulots d'étranglement et ajustez la répartition du travail.</p>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testimonials">
-  <span class="section-eyebrow">Témoignages</span>
-  <h2 class="reveal">Ce qu'en disent<br>nos utilisateurs</h2>
-  <div class="testi-grid">
-    <div class="testi reveal">
-      <p class="testi-quote">« Avant TimeTabl, je passais deux heures chaque lundi à consolider les disponibilités de mon équipe dans un tableur. Maintenant c'est réglé en dix minutes. »</p>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#2a5c45">CM</div>
-        <div>
-          <div class="testi-name">Claire M.</div>
-          <div class="testi-role">Directrice des opérations, agence de conseil</div>
+    <section class="section" id="how" style="background: #fff7f2;">
+        <div class="section-inner">
+            <h2 class="section-title">Comment ça fonctionne</h2>
+            <p class="section-sub">Trois étapes simples pour organiser votre temps autrement.</p>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h4>1. Définissez vos priorités</h4>
+                        <p>Créez vos grands blocs de travail, de réunion et de pause. Comme poser les fondations d'une semaine équilibrée.</p>
+                    </div>
+                </div>
+                <div class="timeline-step">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h4>2. Ajoutez vos rendez-vous</h4>
+                        <p>Les créneaux se placent automatiquement aux bons endroits. L'outil détecte les conflits et propose des ajustements.</p>
+                    </div>
+                </div>
+                <div class="timeline-step">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h4>3. Visualisez et ajustez</h4>
+                        <p>Prenez du recul sur votre planning. Zoomez, déplacez un élément, et l'ensemble s'harmonise en temps réel.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="testi reveal">
-      <p class="testi-quote">« La détection automatique des conflits nous a évité plusieurs crises. L'interface est vraiment propre — mes équipes ont adopté l'outil sans formation. »</p>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#2a5070">TL</div>
-        <div>
-          <div class="testi-name">Thomas L.</div>
-          <div class="testi-role">CTO, startup SaaS</div>
+    </section>
+
+    <section class="section" id="pricing">
+        <div class="section-inner">
+            <h2 class="section-title">Choisissez votre formule</h2>
+            <p class="section-sub">Des offres adaptées à chaque besoin, du particulier à l'équipe.</p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Essentiel</h3>
+                    <div class="price">0 €<span>/mois</span></div>
+                    <ul>
+                        <li>1 utilisateur</li>
+                        <li>Planning basique</li>
+                        <li>Vue hebdomadaire</li>
+                        <li>Export image</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline btn-price">Commencer</a>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Populaire</div>
+                    <h3>Pro</h3>
+                    <div class="price">19 €<span>/mois</span></div>
+                    <ul>
+                        <li>Jusqu'à 10 utilisateurs</li>
+                        <li>Intelligence adaptative</li>
+                        <li>Vues multiples</li>
+                        <li>Intégrations Slack, Calendar</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-price">Essayer Pro</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Équipe</h3>
+                    <div class="price">49 €<span>/mois</span></div>
+                    <ul>
+                        <li>Utilisateurs illimités</li>
+                        <li>Personnalisation avancée</li>
+                        <li>API & webhooks</li>
+                        <li>Support dédié</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline btn-price">Contacter</a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="testi reveal">
-      <p class="testi-quote">« La vue multi-ressources est exactement ce que nous cherchions depuis des années. Nous gérons 30 intervenants sur des dizaines de projets en parallèle. »</p>
-      <div class="testi-author">
-        <div class="testi-avatar" style="background:#7a4a00">SB</div>
-        <div>
-          <div class="testi-name">Sophie B.</div>
-          <div class="testi-role">Responsable planning, cabinet de formation</div>
+    </section>
+
+    <section class="section" style="background: #fff;">
+        <div class="section-inner">
+            <h2 class="section-title">Ils utilisent TimeTabl</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <q>TimeTabl a transformé mon chaos créatif en une organisation claire. Je ne subis plus mon planning, je le construis.</q>
+                    <div class="author">— Clara M., designer indépendante</div>
+                </div>
+                <div class="testimonial">
+                    <q>L'interface est d'une fluidité rare. Mon équipe l'a adoptée sans formation, tout est devenu plus simple.</q>
+                    <div class="author">— Lucas B., fondateur de startup</div>
+                </div>
+                <div class="testimonial">
+                    <q>Enfin un logiciel qui respecte la façon dont je travaille. L'esthétique sobre m'aide à me concentrer.</q>
+                    <div class="author">— Emma R., professeure d'université</div>
+                </div>
+                <div class="testimonial">
+                    <q>Je gère 50 collaborateurs avec une sérénité nouvelle. Les conflits de planning ont disparu.</q>
+                    <div class="author">— Marc L., directeur de clinique</div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- PRICING -->
-<section id="pricing">
-  <span class="section-eyebrow">Tarifs</span>
-  <h2 class="reveal">Simple et transparent</h2>
-  <p class="section-sub reveal">Essai gratuit 14 jours, sans carte bancaire. Changez ou annulez à tout moment.</p>
-  <div class="pricing-grid">
-    <div class="plan reveal">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">Gratuit</div>
-      <div class="plan-per">jusqu'à 3 utilisateurs</div>
-      <hr class="plan-divider">
-      <ul class="plan-features">
-        <li>3 utilisateurs inclus</li>
-        <li>Vue semaine et mois</li>
-        <li>Synchronisation iCal</li>
-        <li>Historique 30 jours</li>
-      </ul>
-      <button class="plan-btn">Commencer</button>
-    </div>
-    <div class="plan featured reveal">
-      <div class="plan-name">Équipe</div>
-      <div class="plan-price">12€</div>
-      <div class="plan-per">par utilisateur / mois</div>
-      <hr class="plan-divider">
-      <ul class="plan-features">
-        <li>Utilisateurs illimités</li>
-        <li>Toutes les vues</li>
-        <li>Google Calendar & Outlook</li>
-        <li>Rapports de charge</li>
-        <li>Partage et permissions</li>
-        <li>Assistance prioritaire</li>
-      </ul>
-      <button class="plan-btn">Essai gratuit 14 jours</button>
-    </div>
-    <div class="plan reveal">
-      <div class="plan-name">Entreprise</div>
-      <div class="plan-price">Sur devis</div>
-      <div class="plan-per">à partir de 20 utilisateurs</div>
-      <hr class="plan-divider">
-      <ul class="plan-features">
-        <li>Tout le plan Équipe</li>
-        <li>SSO & SAML</li>
-        <li>API & webhooks</li>
-        <li>Onboarding dédié</li>
-        <li>SLA garanti</li>
-        <li>Facturation annuelle</li>
-      </ul>
-      <button class="plan-btn">Nous contacter</button>
-    </div>
-  </div>
-</section>
+    <section class="section" id="cta">
+        <div class="section-inner">
+            <div class="cta-block">
+                <h2>Prêt à simplifier votre planning ?</h2>
+                <p>Rejoignez les équipes qui optimisent leur temps avec TimeTabl. Essayez gratuitement pendant 30 jours.</p>
+                <a href="#" class="btn-white">Essayer TimeTabl gratuitement</a>
+            </div>
+        </div>
+    </section>
 
-<!-- CTA -->
-<section class="cta-section">
-  <h2 class="reveal">Prêt à reprendre le contrôle de votre planning&nbsp;?</h2>
-  <p class="reveal">Rejoignez les équipes qui ont simplifié leur organisation avec TimeTabl.</p>
-  <div class="hero-actions">
-    <a href="#pricing" class="btn-primary">Démarrer gratuitement</a>
-    <a href="mailto:contact@timetabl.fr" class="btn-ghost">Nous contacter</a>
-  </div>
-</section>
+    <footer class="footer">
+        <p>© 2026 TimeTabl — Fait avec soin. <a href="#" style="color:var(--accent);">Contact</a></p>
+    </footer>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">Time<span>Tabl</span></div>
-  <nav class="footer-links">
-    <a href="#">Fonctionnalités</a>
-    <a href="#">Tarifs</a>
-    <a href="#">Blog</a>
-    <a href="#">Aide</a>
-    <a href="#">Mentions légales</a>
-  </nav>
-  <span class="footer-copy">© 2026 TimeTabl — Tous droits réservés</span>
-</footer>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const dayStr = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' });
+            document.getElementById('liveTime').textContent = timeStr;
+            document.getElementById('liveDay').textContent = dayStr;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
 
-<script>
-  // Scroll reveal
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-</script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+    </script>
 </body>
 </html>
