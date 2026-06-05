@@ -1,130 +1,665 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Logiciel</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeTabl — Planning intelligent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+  :root {
+    --ink:    #0f0f0f;
+    --muted:  #6b6b6b;
+    --line:   #e2e2e2;
+    --bg:     #f8f7f4;
+    --white:  #ffffff;
+    --accent: #2a5c45;
+    --accent2:#d4ede3;
+    --serif:  'DM Serif Display', Georgia, serif;
+    --sans:   'DM Sans', system-ui, sans-serif;
+  }
 
-        body {
-            background: #111;
-            color: white;
-        }
+  html { scroll-behavior: smooth; }
 
-        header {
-            text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #0066ff, #00c3ff);
-        }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 6vw; height: 64px;
+    background: rgba(248,247,244,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .logo {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: .875rem; font-weight: 400; color: var(--muted);
+    text-decoration: none; letter-spacing: .01em;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    font-size: .875rem; font-weight: 500;
+    background: var(--ink); color: var(--white);
+    border: none; padding: .55rem 1.4rem; border-radius: 6px;
+    cursor: pointer; text-decoration: none;
+    transition: background .2s, transform .15s;
+  }
+  .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
 
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid; place-items: center;
+    padding: 8rem 6vw 4rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 10%, var(--accent2) 0%, transparent 70%);
+    opacity: .5; pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent2);
+    padding: .35rem 1rem; border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp .7s ease both;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.08; letter-spacing: -.03em;
+    color: var(--ink); max-width: 14ch; margin: 0 auto 1.5rem;
+    animation: fadeUp .7s .1s ease both;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: 1.125rem; font-weight: 300; color: var(--muted);
+    max-width: 46ch; margin: 0 auto 2.5rem;
+    animation: fadeUp .7s .2s ease both;
+  }
+  .hero-actions {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp .7s .3s ease both;
+  }
+  .btn-primary {
+    font-family: var(--sans); font-size: .95rem; font-weight: 500;
+    background: var(--ink); color: var(--white);
+    border: 2px solid var(--ink);
+    padding: .8rem 2rem; border-radius: 8px;
+    cursor: pointer; text-decoration: none;
+    transition: background .2s, color .2s, transform .15s;
+  }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: var(--sans); font-size: .95rem; font-weight: 400;
+    background: transparent; color: var(--ink);
+    border: 2px solid var(--line);
+    padding: .8rem 2rem; border-radius: 8px;
+    cursor: pointer; text-decoration: none;
+    transition: border-color .2s, transform .15s;
+  }
+  .btn-ghost:hover { border-color: var(--ink); transform: translateY(-2px); }
 
-        .download-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 15px 35px;
-            background: white;
-            color: #0066ff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
+  /* ── MOCKUP ── */
+  .mockup-wrap {
+    width: min(860px, 90vw); margin: 4rem auto 0;
+    animation: fadeUp .8s .4s ease both;
+  }
+  .mockup-bar {
+    background: #e8e8e5; border-radius: 12px 12px 0 0;
+    padding: .65rem 1rem; display: flex; align-items: center; gap: .5rem;
+  }
+  .dot { width:11px; height:11px; border-radius:50%; }
+  .dot-r { background: #ff5f57; } .dot-y { background: #ffbd2e; } .dot-g { background: #28c840; }
+  .mockup-body {
+    background: var(--white);
+    border: 1px solid var(--line); border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px -12px rgba(0,0,0,.13);
+  }
+  .calendar-ui {
+    display: grid; grid-template-columns: 200px 1fr; min-height: 360px;
+  }
+  .cal-sidebar {
+    background: #f4f3f0; border-right: 1px solid var(--line);
+    padding: 1.25rem;
+  }
+  .cal-mini-month { margin-bottom: 1.5rem; }
+  .mini-month-label {
+    font-size: .7rem; font-weight: 500; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: .6rem;
+  }
+  .mini-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+  .mini-cell {
+    aspect-ratio: 1; display: grid; place-items: center;
+    font-size: .6rem; color: var(--muted); border-radius: 3px;
+  }
+  .mini-cell.today { background: var(--accent); color: #fff; font-weight: 500; }
+  .mini-cell.has-event { background: var(--accent2); color: var(--accent); font-weight: 500; }
+  .sidebar-label { font-size: .65rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+  .team-item { display: flex; align-items: center; gap: .5rem; margin-bottom: .45rem; cursor: pointer; }
+  .avatar { width:22px; height:22px; border-radius:50%; font-size:.58rem; color:#fff; display:grid; place-items:center; font-weight:600; flex-shrink:0; }
+  .team-name { font-size: .72rem; color: var(--ink); }
+  .cal-main { padding: 1rem; display:flex; flex-direction:column; gap:.5rem; }
+  .cal-header { display: flex; align-items: center; gap: 1rem; }
+  .cal-title { font-family: var(--serif); font-size: 1rem; color: var(--ink); }
+  .cal-nav { display:flex; gap:.25rem; }
+  .cal-btn { width:24px;height:24px; border:1px solid var(--line); background:var(--white); border-radius:4px; cursor:pointer; display:grid; place-items:center; font-size:.7rem; color:var(--muted); }
+  .week-grid { display: grid; grid-template-columns: 48px repeat(5,1fr); gap:3px; flex:1; }
+  .week-label { font-size:.6rem; color:var(--muted); text-align:center; padding:.2rem; }
+  .hour-label { font-size:.55rem; color:var(--muted); text-align:right; padding-right:.4rem; line-height:1; padding-top:.15rem; }
+  .slot { height: 22px; border-radius: 3px; }
+  .slot.free { background: #f0efe9; }
+  .event-block {
+    border-radius: 4px; padding: .2rem .45rem; font-size:.6rem; font-weight:500;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    height: 22px; display:flex; align-items:center;
+  }
+  .ev-green { background: var(--accent2); color: var(--accent); }
+  .ev-blue  { background: #ddeaf5; color: #2a5070; }
+  .ev-amber { background: #fdefd5; color: #7a4a00; }
+  .ev-rose  { background: #fde4e4; color: #7a2020; }
 
-        .download-btn:hover {
-            transform: scale(1.05);
-        }
+  /* ── STATS ── */
+  .stats {
+    padding: 5rem 6vw;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px; background: var(--line);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .stat-item {
+    background: var(--bg); padding: 2.5rem 2rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--serif); font-size: 3rem;
+    letter-spacing: -.04em; color: var(--ink); line-height: 1;
+    margin-bottom: .4rem;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label { font-size: .82rem; color: var(--muted); font-weight: 300; }
 
-        section {
-            max-width: 1000px;
-            margin: auto;
-            padding: 60px 20px;
-        }
+  /* ── FEATURES ── */
+  section { padding: 6rem 6vw; }
+  .section-eyebrow {
+    font-size: .75rem; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 1rem; display: block;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -.03em; line-height: 1.1;
+    margin-bottom: 1rem; color: var(--ink);
+  }
+  .section-sub { font-size: 1rem; color: var(--muted); font-weight: 300; max-width: 52ch; line-height: 1.7; }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px; margin-top: 4rem; background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .feat {
+    background: var(--bg); padding: 2.5rem;
+    transition: background .2s;
+  }
+  .feat:hover { background: var(--white); }
+  .feat-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--accent2); color: var(--accent);
+    display: grid; place-items: center; font-size: 1.2rem;
+    margin-bottom: 1.25rem;
+  }
+  .feat h3 {
+    font-family: var(--serif); font-size: 1.15rem;
+    letter-spacing: -.02em; margin-bottom: .6rem; color: var(--ink);
+  }
+  .feat p { font-size: .875rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
 
-        .card {
-            background: #1d1d1d;
-            padding: 25px;
-            border-radius: 10px;
-        }
+  /* ── HOW ── */
+  .how { background: var(--white); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 3rem; margin-top: 3.5rem; }
+  .step { position: relative; }
+  .step-num {
+    font-family: var(--serif); font-size: 3.5rem; color: var(--accent2);
+    letter-spacing: -.04em; line-height: 1; margin-bottom: .75rem;
+  }
+  .step h3 { font-family: var(--serif); font-size: 1.1rem; margin-bottom: .5rem; letter-spacing: -.02em; }
+  .step p { font-size: .875rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
 
-        .card h3 {
-            margin-bottom: 10px;
-            color: #00c3ff;
-        }
+  /* ── TESTIMONIALS ── */
+  .testimonials { background: var(--ink); color: var(--white); }
+  .testimonials .section-eyebrow { color: var(--accent2); }
+  .testimonials h2 { color: var(--white); }
+  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1.5rem; margin-top: 3.5rem; }
+  .testi {
+    border: 1px solid rgba(255,255,255,.1); border-radius: 10px;
+    padding: 2rem; background: rgba(255,255,255,.04);
+    transition: background .2s;
+  }
+  .testi:hover { background: rgba(255,255,255,.07); }
+  .testi-quote { font-size: .95rem; line-height: 1.7; color: rgba(255,255,255,.8); margin-bottom: 1.5rem; font-weight: 300; }
+  .testi-author { display: flex; align-items: center; gap: .75rem; }
+  .testi-avatar { width: 36px; height: 36px; border-radius: 50%; display:grid; place-items:center; font-size:.75rem; font-weight:600; color:#fff; }
+  .testi-name { font-size: .82rem; font-weight: 500; color: var(--white); }
+  .testi-role { font-size: .75rem; color: rgba(255,255,255,.45); }
 
-        footer {
-            text-align: center;
-            padding: 30px;
-            background: #181818;
-            opacity: 0.8;
-        }
-    </style>
+  /* ── PRICING ── */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1.5rem; margin-top: 3.5rem; }
+  .plan {
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 2rem; background: var(--white);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .plan:hover { transform: translateY(-4px); box-shadow: 0 16px 48px -8px rgba(0,0,0,.1); }
+  .plan.featured { border-color: var(--accent); background: var(--ink); color: var(--white); }
+  .plan-name { font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
+  .plan.featured .plan-name { color: var(--accent2); }
+  .plan-price { font-family: var(--serif); font-size: 2.8rem; letter-spacing: -.04em; line-height: 1; margin-bottom: .25rem; }
+  .plan-per { font-size: .8rem; color: var(--muted); margin-bottom: 1.5rem; font-weight: 300; }
+  .plan.featured .plan-per { color: rgba(255,255,255,.5); }
+  .plan-divider { border: none; border-top: 1px solid var(--line); margin: 1.25rem 0; }
+  .plan.featured .plan-divider { border-color: rgba(255,255,255,.12); }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: .65rem; margin-bottom: 1.75rem; }
+  .plan-features li { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: .6rem; font-weight: 300; }
+  .plan.featured .plan-features li { color: rgba(255,255,255,.7); }
+  .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 600; flex-shrink: 0; }
+  .plan.featured .plan-features li::before { color: var(--accent2); }
+  .plan-btn {
+    width: 100%; padding: .75rem; border-radius: 7px; font-family: var(--sans);
+    font-size: .875rem; font-weight: 500; cursor: pointer; border: 2px solid var(--ink);
+    background: transparent; color: var(--ink); transition: background .2s, color .2s;
+  }
+  .plan-btn:hover { background: var(--ink); color: var(--white); }
+  .plan.featured .plan-btn { background: var(--accent); border-color: var(--accent); color: var(--white); }
+  .plan.featured .plan-btn:hover { background: #3a7c5e; }
+
+  /* ── CTA ── */
+  .cta-section {
+    text-align: center; padding: 8rem 6vw;
+    background: var(--bg); border-top: 1px solid var(--line);
+  }
+  .cta-section h2 { font-size: clamp(2.2rem, 5vw, 4rem); max-width: 18ch; margin: 0 auto 1.2rem; }
+  .cta-section p { color: var(--muted); font-weight: 300; font-size: 1rem; max-width: 44ch; margin: 0 auto 2.5rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 6vw;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+  }
+  .footer-logo { font-family: var(--serif); font-size: 1.2rem; letter-spacing: -.02em; color: var(--ink); }
+  .footer-logo span { color: var(--accent); }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { font-size: .82rem; color: var(--muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--ink); }
+  .footer-copy { font-size: .78rem; color: var(--muted); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .calendar-ui { grid-template-columns: 1fr; }
+    .cal-sidebar { display: none; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
 </head>
 <body>
 
-<header>
-    <h1>Mon Logiciel</h1>
-    <p class="subtitle">Une courte description de votre logiciel.</p>
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">Time<span>Tabl</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#how">Comment ça marche</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Essai gratuit</a>
+</nav>
 
-    <a class="download-btn" href="#">
-        Télécharger
-    </a>
-</header>
-
-<section>
-    <h2>Fonctionnalités</h2>
-    <br>
-
-    <div class="features">
-        <div class="card">
-            <h3>Rapide</h3>
-            <p>Optimisé pour de hautes performances.</p>
-        </div>
-
-        <div class="card">
-            <h3>Simple</h3>
-            <p>Interface intuitive et facile à utiliser.</p>
-        </div>
-
-        <div class="card">
-            <h3>Gratuit</h3>
-            <p>Disponible sans frais pour tous.</p>
-        </div>
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">Planning intelligent</div>
+    <h1>Organisez votre temps, <em>libérez</em> votre équipe</h1>
+    <p class="hero-sub">TimeTabl simplifie la planification des ressources et des équipes. Visualisez, partagez, ajustez — en quelques clics.</p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">Commencer gratuitement</a>
+      <a href="#features" class="btn-ghost">Voir les fonctionnalités</a>
     </div>
+
+    <!-- Faux mockup UI -->
+    <div class="mockup-wrap">
+      <div class="mockup-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="mockup-body">
+        <div class="calendar-ui">
+          <div class="cal-sidebar">
+            <div class="cal-mini-month">
+              <div class="mini-month-label">Juin 2026</div>
+              <div class="mini-grid">
+                <div class="mini-cell">L</div><div class="mini-cell">M</div><div class="mini-cell">M</div><div class="mini-cell">J</div><div class="mini-cell">V</div><div class="mini-cell">S</div><div class="mini-cell">D</div>
+                <div class="mini-cell">1</div><div class="mini-cell">2</div><div class="mini-cell">3</div><div class="mini-cell">4</div><div class="mini-cell today">5</div><div class="mini-cell">6</div><div class="mini-cell">7</div>
+                <div class="mini-cell has-event">8</div><div class="mini-cell">9</div><div class="mini-cell has-event">10</div><div class="mini-cell">11</div><div class="mini-cell">12</div><div class="mini-cell">13</div><div class="mini-cell">14</div>
+                <div class="mini-cell">15</div><div class="mini-cell">16</div><div class="mini-cell">17</div><div class="mini-cell has-event">18</div><div class="mini-cell">19</div><div class="mini-cell">20</div><div class="mini-cell">21</div>
+                <div class="mini-cell">22</div><div class="mini-cell">23</div><div class="mini-cell">24</div><div class="mini-cell">25</div><div class="mini-cell">26</div><div class="mini-cell">27</div><div class="mini-cell">28</div>
+                <div class="mini-cell">29</div><div class="mini-cell">30</div>
+              </div>
+            </div>
+            <div class="sidebar-label">Équipe</div>
+            <div class="team-item"><div class="avatar" style="background:#2a5c45">SC</div><div class="team-name">Sophie C.</div></div>
+            <div class="team-item"><div class="avatar" style="background:#2a5070">MB</div><div class="team-name">Marc B.</div></div>
+            <div class="team-item"><div class="avatar" style="background:#7a4a00">LD</div><div class="team-name">Laura D.</div></div>
+            <div class="team-item"><div class="avatar" style="background:#6b2a6b">AR</div><div class="team-name">Alex R.</div></div>
+          </div>
+          <div class="cal-main">
+            <div class="cal-header">
+              <span class="cal-title">Semaine du 2 juin</span>
+              <div class="cal-nav">
+                <button class="cal-btn">‹</button>
+                <button class="cal-btn">›</button>
+              </div>
+            </div>
+            <div class="week-grid">
+              <div></div>
+              <div class="week-label">Lun 2</div><div class="week-label">Mar 3</div><div class="week-label">Mer 4</div>
+              <div class="week-label" style="color:var(--accent);font-weight:500">Jeu 5</div><div class="week-label">Ven 6</div>
+
+              <div class="hour-label">09h</div>
+              <div class="event-block ev-green">Revue produit</div>
+              <div class="slot free"></div>
+              <div class="event-block ev-blue">Design sprint</div>
+              <div class="slot free"></div>
+              <div class="event-block ev-amber">Client call</div>
+
+              <div class="hour-label">10h</div>
+              <div class="slot free"></div>
+              <div class="event-block ev-rose">Formation RH</div>
+              <div class="event-block ev-blue">Design sprint</div>
+              <div class="event-block ev-green">Stand-up</div>
+              <div class="slot free"></div>
+
+              <div class="hour-label">11h</div>
+              <div class="event-block ev-amber">Comité dir.</div>
+              <div class="slot free"></div>
+              <div class="slot free"></div>
+              <div class="slot free"></div>
+              <div class="event-block ev-green">Revue Q3</div>
+
+              <div class="hour-label">14h</div>
+              <div class="slot free"></div>
+              <div class="event-block ev-green">Démo client</div>
+              <div class="slot free"></div>
+              <div class="event-block ev-blue">Atelier UX</div>
+              <div class="slot free"></div>
+
+              <div class="hour-label">15h</div>
+              <div class="event-block ev-rose">Recrutement</div>
+              <div class="event-block ev-green">Démo client</div>
+              <div class="event-block ev-amber">Budget</div>
+              <div class="event-block ev-blue">Atelier UX</div>
+              <div class="slot free"></div>
+
+              <div class="hour-label">16h</div>
+              <div class="slot free"></div>
+              <div class="slot free"></div>
+              <div class="slot free"></div>
+              <div class="event-block ev-rose">Rétro équipe</div>
+              <div class="slot free"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section>
-    <h2>À propos</h2>
-    <br>
-    <p>
-        Décrivez ici votre logiciel, son objectif et ce qui le rend unique.
-    </p>
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item reveal">
+    <div class="stat-num">2<span>h</span></div>
+    <div class="stat-label">gagnées par semaine et par manager</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num">94<span>%</span></div>
+    <div class="stat-label">de taux de satisfaction utilisateur</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num">—40<span>%</span></div>
+    <div class="stat-label">de conflits de planning</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num">3<span>×</span></div>
+    <div class="stat-label">plus vite qu'un tableur classique</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <span class="section-eyebrow">Fonctionnalités</span>
+  <h2 class="reveal">Tout ce dont vous avez besoin,<br>rien de superflu</h2>
+  <p class="section-sub reveal">TimeTabl a été conçu pour les équipes qui veulent gagner du temps, pas en perdre à maîtriser un outil.</p>
+
+  <div class="features-grid">
+    <div class="feat reveal">
+      <div class="feat-icon">📅</div>
+      <h3>Vue planning multi-ressources</h3>
+      <p>Visualisez simultanément les disponibilités de toute votre équipe sur une vue semaine ou mois claire et lisible.</p>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">🔄</div>
+      <h3>Glisser-déposer intuitif</h3>
+      <p>Déplacez, redimensionnez, dupliquez vos créneaux d'un simple geste. Aucun formulaire complexe.</p>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">⚡</div>
+      <h3>Détection de conflits</h3>
+      <p>TimeTabl signale instantanément les chevauchements et vous propose des alternatives pour les résoudre.</p>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">🔗</div>
+      <h3>Synchronisation calendriers</h3>
+      <p>Connectez Google Calendar, Outlook ou iCal. Vos plannings restent toujours à jour, sans double saisie.</p>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">👥</div>
+      <h3>Partage et permissions</h3>
+      <p>Définissez qui peut voir, modifier ou exporter. Partagez un lien lecture seule à un client ou partenaire.</p>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">📊</div>
+      <h3>Rapports de charge</h3>
+      <p>Analysez la répartition du temps par collaborateur, projet ou période. Exportez en PDF ou CSV.</p>
+    </div>
+  </div>
 </section>
 
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <span class="section-eyebrow">Comment ça marche</span>
+  <h2 class="reveal">Opérationnel en <em style="font-style:italic;color:var(--accent)">5 minutes</em></h2>
+  <p class="section-sub reveal">Pas de formation, pas de migration complexe. Importez vos données existantes et démarrez.</p>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <h3>Créez votre espace</h3>
+      <p>Inscrivez-vous et invitez votre équipe par e-mail. Chaque membre reçoit un accès personnalisé selon son rôle.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">02</div>
+      <h3>Importez vos données</h3>
+      <p>Connectez vos calendriers existants ou importez un fichier CSV. Vos plannings actuels apparaissent en quelques secondes.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">03</div>
+      <h3>Planifiez et collaborez</h3>
+      <p>Créez, modifiez et partagez vos plannings en temps réel. Toute l'équipe est synchronisée instantanément.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">04</div>
+      <h3>Analysez et optimisez</h3>
+      <p>Consultez les rapports de charge, identifiez les goulots d'étranglement et ajustez la répartition du travail.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <span class="section-eyebrow">Témoignages</span>
+  <h2 class="reveal">Ce qu'en disent<br>nos utilisateurs</h2>
+  <div class="testi-grid">
+    <div class="testi reveal">
+      <p class="testi-quote">« Avant TimeTabl, je passais deux heures chaque lundi à consolider les disponibilités de mon équipe dans un tableur. Maintenant c'est réglé en dix minutes. »</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#2a5c45">CM</div>
+        <div>
+          <div class="testi-name">Claire M.</div>
+          <div class="testi-role">Directrice des opérations, agence de conseil</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi reveal">
+      <p class="testi-quote">« La détection automatique des conflits nous a évité plusieurs crises. L'interface est vraiment propre — mes équipes ont adopté l'outil sans formation. »</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#2a5070">TL</div>
+        <div>
+          <div class="testi-name">Thomas L.</div>
+          <div class="testi-role">CTO, startup SaaS</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi reveal">
+      <p class="testi-quote">« La vue multi-ressources est exactement ce que nous cherchions depuis des années. Nous gérons 30 intervenants sur des dizaines de projets en parallèle. »</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#7a4a00">SB</div>
+        <div>
+          <div class="testi-name">Sophie B.</div>
+          <div class="testi-role">Responsable planning, cabinet de formation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <span class="section-eyebrow">Tarifs</span>
+  <h2 class="reveal">Simple et transparent</h2>
+  <p class="section-sub reveal">Essai gratuit 14 jours, sans carte bancaire. Changez ou annulez à tout moment.</p>
+  <div class="pricing-grid">
+    <div class="plan reveal">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">Gratuit</div>
+      <div class="plan-per">jusqu'à 3 utilisateurs</div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>3 utilisateurs inclus</li>
+        <li>Vue semaine et mois</li>
+        <li>Synchronisation iCal</li>
+        <li>Historique 30 jours</li>
+      </ul>
+      <button class="plan-btn">Commencer</button>
+    </div>
+    <div class="plan featured reveal">
+      <div class="plan-name">Équipe</div>
+      <div class="plan-price">12€</div>
+      <div class="plan-per">par utilisateur / mois</div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>Utilisateurs illimités</li>
+        <li>Toutes les vues</li>
+        <li>Google Calendar & Outlook</li>
+        <li>Rapports de charge</li>
+        <li>Partage et permissions</li>
+        <li>Assistance prioritaire</li>
+      </ul>
+      <button class="plan-btn">Essai gratuit 14 jours</button>
+    </div>
+    <div class="plan reveal">
+      <div class="plan-name">Entreprise</div>
+      <div class="plan-price">Sur devis</div>
+      <div class="plan-per">à partir de 20 utilisateurs</div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>Tout le plan Équipe</li>
+        <li>SSO & SAML</li>
+        <li>API & webhooks</li>
+        <li>Onboarding dédié</li>
+        <li>SLA garanti</li>
+        <li>Facturation annuelle</li>
+      </ul>
+      <button class="plan-btn">Nous contacter</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="reveal">Prêt à reprendre le contrôle de votre planning&nbsp;?</h2>
+  <p class="reveal">Rejoignez les équipes qui ont simplifié leur organisation avec TimeTabl.</p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">Démarrer gratuitement</a>
+    <a href="mailto:contact@timetabl.fr" class="btn-ghost">Nous contacter</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-    © 2026 Mon Logiciel
+  <div class="footer-logo">Time<span>Tabl</span></div>
+  <nav class="footer-links">
+    <a href="#">Fonctionnalités</a>
+    <a href="#">Tarifs</a>
+    <a href="#">Blog</a>
+    <a href="#">Aide</a>
+    <a href="#">Mentions légales</a>
+  </nav>
+  <span class="footer-copy">© 2026 TimeTabl — Tous droits réservés</span>
 </footer>
 
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
 </body>
 </html>
